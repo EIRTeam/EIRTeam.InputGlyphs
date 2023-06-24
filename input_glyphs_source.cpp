@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "input_glyphs_source.h"
-#include "builtin_glyphs.gen.h"
 #include "controller_list.h"
 #include "glyphs.gen.h"
 #include "input_glyph_svg_decode.h"
