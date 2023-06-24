@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="HBInputGlyphsSingleton" inherits="Object" version="4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<signals>
+		<signal name="input_type_changed">
+			<description>
+			</description>
+		</signal>
+	</signals>
+	<constants>
+		<constant name="INPUT_ORIGIN_INVALID" value="-1" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_A" value="0" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_B" value="1" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_X" value="2" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_Y" value="3" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_VIEW" value="4" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_MENU" value="5" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTBUMPER" value="6" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTBUMPER" value="7" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTTRIGGER_PULL" value="8" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTTRIGGER_CLICK" value="9" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTTRIGGER_PULL" value="10" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTTRIGGER_CLICK" value="11" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTSTICK_MOVE" value="12" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTSTICK_CLICK" value="13" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTSTICK_DPADNORTH" value="14" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTSTICK_DPADSOUTH" value="15" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTSTICK_DPADWEST" value="16" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTSTICK_DPADEAST" value="17" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTSTICK_MOVE" value="18" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTSTICK_CLICK" value="19" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTSTICK_DPADNORTH" value="20" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTSTICK_DPADSOUTH" value="21" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTSTICK_DPADWEST" value="22" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTSTICK_DPADEAST" value="23" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_DPAD_NORTH" value="24" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_DPAD_SOUTH" value="25" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_DPAD_WEST" value="26" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_DPAD_EAST" value="27" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_DPAD_MOVE" value="28" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_MISC1" value="29" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_PADDLE1" value="30" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_PADDLE2" value="31" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_PADDLE3" value="32" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_PADDLE4" value="33" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_TRACKPAD_CLICK" value="34" enum="HBInputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_COUNT" value="35" enum="HBInputOrigin">
+		</constant>
+		<constant name="UNKNOWN" value="0" enum="HBInputType">
+		</constant>
+		<constant name="STEAM_CONTROLLER" value="1" enum="HBInputType">
+		</constant>
+		<constant name="XBOX_360_CONTROLLER" value="2" enum="HBInputType">
+		</constant>
+		<constant name="XBOX_ONE_CONTROLLER" value="3" enum="HBInputType">
+		</constant>
+		<constant name="GENERIC_XINPUT_CONTROLLER" value="4" enum="HBInputType">
+		</constant>
+		<constant name="PS3_CONTROLLER" value="5" enum="HBInputType">
+		</constant>
+		<constant name="PS4_CONTROLLER" value="6" enum="HBInputType">
+		</constant>
+		<constant name="PS5_CONTROLLER" value="7" enum="HBInputType">
+		</constant>
+		<constant name="SWITCH_PRO_CONTROLLER" value="8" enum="HBInputType">
+		</constant>
+		<constant name="STEAM_DECK_CONTROLLER" value="9" enum="HBInputType">
+		</constant>
+		<constant name="INPUT_TYPE_MAX" value="10" enum="HBInputType">
+		</constant>
+	</constants>
+</class>

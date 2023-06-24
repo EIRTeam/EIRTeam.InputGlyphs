@@ -1,0 +1,69 @@
+/**************************************************************************/
+/*  input_glyphs_source.h                                                 */
+/**************************************************************************/
+/*                         This file is part of:                          */
+/*                          EIRTeam.InputGlyphs                           */
+/*                         https://ph.eirteam.moe                         */
+/**************************************************************************/
+/* Copyright (c) 2023-present Álex Román (EIRTeam) & contributors.        */
+/*                                                                        */
+/*                                                                        */
+/* Permission is hereby granted, free of charge, to any person obtaining  */
+/* a copy of this software and associated documentation files (the        */
+/* "Software"), to deal in the Software without restriction, including    */
+/* without limitation the rights to use, copy, modify, merge, publish,    */
+/* distribute, sublicense, and/or sell copies of the Software, and to     */
+/* permit persons to whom the Software is furnished to do so, subject to  */
+/* the following conditions:                                              */
+/*                                                                        */
+/* The above copyright notice and this permission notice shall be         */
+/* included in all copies or substantial portions of the Software.        */
+/*                                                                        */
+/* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,        */
+/* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF     */
+/* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. */
+/* IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY   */
+/* CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,   */
+/* TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE      */
+/* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
+/**************************************************************************/
+
+#ifndef INPUT_GLYPHS_SOURCE_H
+#define INPUT_GLYPHS_SOURCE_H
+
+#include "core/object/ref_counted.h"
+#include "input_glyphs.h"
+#include "scene/resources/texture.h"
+
+class HBInputGlyphsSource : public RefCounted {
+	GDCLASS(HBInputGlyphsSource, RefCounted);
+
+protected:
+	static Ref<HBInputGlyphsSource> (*_create_func)();
+
+public:
+	virtual Ref<Texture2D> get_input_glyph(const HBInputType &p_input_type, const HBInputOrigin &p_input_origin, const int &p_glyphs_style, const HBInputGlyphSize &p_size) = 0;
+	static Ref<HBInputGlyphsSource> create();
+	virtual HBInputType identify_joy(int p_device) const = 0;
+};
+
+class HBInputGlyphsSourceBuiltin : public HBInputGlyphsSource {
+	GDCLASS(HBInputGlyphsSourceBuiltin, HBInputGlyphsSource);
+
+private:
+	virtual Ref<Texture2D> get_input_glyph(const HBInputType &p_input_type, const HBInputOrigin &p_input_origin, const int &p_glyphs_style, const HBInputGlyphSize &p_size) override;
+
+public:
+	static Ref<HBInputGlyphsSource> _create_current() {
+		Ref<HBInputGlyphsSourceBuiltin> ref;
+		ref.instantiate();
+		return ref;
+	}
+
+	static void make_current() {
+		_create_func = _create_current;
+	}
+	virtual HBInputType identify_joy(int identify_joy) const override;
+};
+
+#endif // INPUT_GLYPHS_SOURCE_H

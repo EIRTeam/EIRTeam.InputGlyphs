@@ -1,0 +1,40 @@
+#!/usr/bin/env python
+
+import input_glyphs_builder
+
+Import("env")
+
+env_input_glyphs = env.Clone()
+
+module_obj = []
+
+excluded = []
+
+if "imgui" in env.module_list and "steamworks" in env.module_list:
+    env_input_glyphs.Prepend(CPPPATH=["#modules/imgui/thirdparty/imgui/"])
+    env_input_glyphs.Prepend(CPPPATH=["modules/thirdparty/steamworks/public"])
+    excluded.append("input_glyph_demo_tool.cpp")
+
+env_input_glyphs.Prepend(CPPPATH=["#thirdparty/thorvg/inc"])
+
+sources = [x for x in Glob("*.cpp") if str(x) not in excluded]
+
+env_input_glyphs["BUILDERS"]["MakeInputGlyphsHeader"] = Builder(
+    action=env.Run(input_glyphs_builder.make_glyphs_header, "Generating input glyphs header."),
+    suffix=".h",
+    src_suffix=".svg",
+)
+
+env_input_glyphs.Alias("glyph_headers", [env_input_glyphs.MakeInputGlyphsHeader("glyphs.gen.h", "resources/info.json")])
+
+if ARGUMENTS.get("input_glyphs_shared", "no") == "yes":
+    # Shared lib compilation
+    env_input_glyphs.Append(CCFLAGS=["-fPIC"])
+    env_input_glyphs["LIBS"] = []
+    shared_lib = env_input_glyphs.SharedLibrary(target="#bin/input_glyphs", source=sources)
+    shared_lib_shim = shared_lib[0].name.rsplit(".", 1)[0]
+    env.Append(LIBPATH=["#bin"])
+    env.Append(LIBS=["libinput_glyphs-linuxbsd-editor-dev-x86_64"])
+else:
+    env_input_glyphs.add_source_files(module_obj, sources)
+    env.modules_sources += module_obj
