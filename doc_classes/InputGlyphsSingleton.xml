@@ -1,11 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="HBInputGlyphsSingleton" inherits="Object" version="4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+<class name="InputGlyphsSingleton" inherits="Object" version="4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
 	<brief_description>
 	</brief_description>
 	<description>
 	</description>
 	<tutorials>
 	</tutorials>
+	<methods>
+		<method name="get_glyph_texture">
+			<return type="Texture2D" />
+			<param index="0" name="input_origin" type="int" enum="HBInputOrigin" />
+			<param index="1" name="style" type="int" />
+			<param index="2" name="size" type="int" enum="HBInputGlyphSize" default="3" />
+			<description>
+				Retrieves the glyph texture, make sure it is already loaded by using [method has_glyph_texture].
+			</description>
+		</method>
+		<method name="get_origin_from_joy_event" qualifiers="const">
+			<return type="int" enum="HBInputOrigin" />
+			<param index="0" name="input_event" type="InputEvent" />
+			<description>
+				Returns the input origin from the given joy event, it will return [constant INPUT_ORIGIN_INVALID] if it couldn't find any.
+			</description>
+		</method>
+		<method name="has_glyph_texture">
+			<return type="bool" />
+			<param index="0" name="input_origin" type="int" enum="HBInputOrigin" />
+			<param index="1" name="style" type="int" />
+			<param index="2" name="size" type="int" enum="HBInputGlyphSize" default="3" />
+			<description>
+				Returns [code]true[/code] if the glyph texture is ready and can be retrieved using [method get_glyph_texture].
+			</description>
+		</method>
+		<method name="request_glyph_texture_load">
+			<return type="void" />
+			<param index="0" name="input_origin" type="int" enum="HBInputOrigin" />
+			<param index="1" name="style" type="int" />
+			<param index="2" name="size" type="int" enum="HBInputGlyphSize" default="3" />
+			<description>
+				Request a glyph to start loading, does nothing if it's already loading.
+			</description>
+		</method>
+	</methods>
 	<signals>
 		<signal name="input_type_changed">
 			<description>
@@ -24,8 +60,10 @@
 		<constant name="INPUT_ORIGIN_Y" value="3" enum="HBInputOrigin">
 		</constant>
 		<constant name="INPUT_ORIGIN_VIEW" value="4" enum="HBInputOrigin">
+			Select/Back
 		</constant>
 		<constant name="INPUT_ORIGIN_MENU" value="5" enum="HBInputOrigin">
+			Start
 		</constant>
 		<constant name="INPUT_ORIGIN_LEFTBUMPER" value="6" enum="HBInputOrigin">
 		</constant>
@@ -74,14 +112,19 @@
 		<constant name="INPUT_ORIGIN_DPAD_MOVE" value="28" enum="HBInputOrigin">
 		</constant>
 		<constant name="INPUT_ORIGIN_MISC1" value="29" enum="HBInputOrigin">
+			Xbox Series X share button, PS5 microphone button, Nintendo Switch Pro capture button, Amazon Luna microphone button
 		</constant>
 		<constant name="INPUT_ORIGIN_PADDLE1" value="30" enum="HBInputOrigin">
+			Xbox Elite paddle P1 (upper left, facing the back)
 		</constant>
 		<constant name="INPUT_ORIGIN_PADDLE2" value="31" enum="HBInputOrigin">
+			Xbox Elite paddle P3 (upper right, facing the back)
 		</constant>
 		<constant name="INPUT_ORIGIN_PADDLE3" value="32" enum="HBInputOrigin">
+			Xbox Elite paddle P2 (lower left, facing the back)
 		</constant>
 		<constant name="INPUT_ORIGIN_PADDLE4" value="33" enum="HBInputOrigin">
+			Xbox Elite paddle P4 (lower right, facing the back)
 		</constant>
 		<constant name="INPUT_ORIGIN_TRACKPAD_CLICK" value="34" enum="HBInputOrigin">
 		</constant>
@@ -108,6 +151,17 @@
 		<constant name="STEAM_DECK_CONTROLLER" value="9" enum="HBInputType">
 		</constant>
 		<constant name="INPUT_TYPE_MAX" value="10" enum="HBInputType">
+		</constant>
+		<constant name="GLYPH_SIZE_SMALL" value="0" enum="HBInputGlyphSize">
+			Small glyph size, usually 32x32.
+		</constant>
+		<constant name="GLYPH_SIZE_MEDIUM" value="1" enum="HBInputGlyphSize">
+			Medium glyph size, usually 128x128.
+		</constant>
+		<constant name="GLYPH_SIZE_LARGE" value="2" enum="HBInputGlyphSize">
+			Large glyph size, usually 256x256.
+		</constant>
+		<constant name="GLYPH_SIZE_MAX" value="3" enum="HBInputGlyphSize">
 		</constant>
 	</constants>
 </class>

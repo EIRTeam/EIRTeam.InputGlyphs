@@ -35,11 +35,11 @@
 #include "scene/gui/center_container.h"
 #include "scene/gui/rich_text_label.h"
 
-class HBInputActionGlyph : public CenterContainer {
-	GDCLASS(HBInputActionGlyph, CenterContainer);
+class InputActionGlyph : public CenterContainer {
+	GDCLASS(InputActionGlyph, CenterContainer);
 	RichTextLabel *rtl;
 	Ref<Texture2D> glyph_texture;
-	String text = " Test";
+	String text = "";
 	StringName action_name = "ui_left";
 	HBInputOrigin origin = HBInputOrigin::INPUT_ORIGIN_A;
 
@@ -62,7 +62,7 @@ protected:
 public:
 	String get_text() const;
 	void set_text(const String &p_text);
-	HBInputActionGlyph();
+	InputActionGlyph();
 
 	int get_glyph_style_override() const;
 	void set_glyph_style_override(const int &p_glyph_style_override);

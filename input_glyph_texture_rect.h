@@ -34,8 +34,8 @@
 #include "input_glyphs.h"
 #include "scene/gui/texture_rect.h"
 
-class HBInputGlyphTextureRect : public TextureRect {
-	GDCLASS(HBInputGlyphTextureRect, TextureRect);
+class InputGlyphTextureRect : public TextureRect {
+	GDCLASS(InputGlyphTextureRect, TextureRect);
 
 private:
 	bool override_glyph_style = false;
@@ -63,7 +63,7 @@ public:
 
 	StringName get_action_name() const;
 	void set_action_name(const StringName &p_action_name);
-	HBInputGlyphTextureRect();
+	InputGlyphTextureRect();
 };
 
 #endif // INPUT_GLYPH_TEXTURE_RECT_H

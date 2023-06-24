@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="InputActionGlyph" inherits="CenterContainer" version="4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+		A glyph with a text next to it.
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="action_name" type="StringName" setter="set_action_name" getter="get_action_name" default="&amp;&quot;ui_left&quot;">
+			Action that will be displayed in this glyph.
+		</member>
+		<member name="glyph_style_override" type="int" setter="set_glyph_style_override" getter="get_glyph_style_override" default="0">
+			Style used to override the default.
+		</member>
+		<member name="override_glyph_style" type="bool" setter="set_override_glyph_style" getter="get_override_glyph_style" default="false">
+			If [code]true[/code] the default glyph style is overridden by whatever is in [member override_glyph_style].
+		</member>
+		<member name="text" type="String" setter="set_text" getter="get_text" default="&quot;&quot;">
+			Text to show next to the input glyph icon.
+		</member>
+	</members>
+</class>

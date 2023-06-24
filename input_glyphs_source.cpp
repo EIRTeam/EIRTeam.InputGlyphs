@@ -34,16 +34,16 @@
 #include "input_glyph_svg_decode.h"
 #include <iterator>
 
-Ref<HBInputGlyphsSource> (*HBInputGlyphsSource::_create_func)() = nullptr;
+Ref<InputGlyphsSource> (*InputGlyphsSource::_create_func)() = nullptr;
 
-Ref<HBInputGlyphsSource> HBInputGlyphsSource::create() {
+Ref<InputGlyphsSource> InputGlyphsSource::create() {
 	if (!_create_func) {
 		return nullptr;
 	}
 	return _create_func();
 }
 
-Ref<Texture2D> HBInputGlyphsSourceBuiltin::get_input_glyph(const HBInputType &p_input_type, const HBInputOrigin &p_input_origin, const int &p_glyphs_style, const HBInputGlyphSize &p_size) {
+Ref<Texture2D> InputGlyphsSourceBuiltin::get_input_glyph(const HBInputType &p_input_type, const HBInputOrigin &p_input_origin, const int &p_glyphs_style, const HBInputGlyphSize &p_size) {
 	int theme = p_glyphs_style & 0b11;
 	int abxy_overrides = p_glyphs_style & 0b110000;
 	abxy_overrides = abxy_overrides >> 4;
@@ -140,7 +140,7 @@ void controller_guid_string_decode(const String &p_guid_str, uint16_t *vendor, u
 	*version = guid_16[6];
 }
 
-HBInputType HBInputGlyphsSourceBuiltin::identify_joy(int p_controller_idx) const {
+HBInputType InputGlyphsSourceBuiltin::identify_joy(int p_controller_idx) const {
 	String guid_str = Input::get_singleton()->get_joy_guid(p_controller_idx);
 	uint16_t vendor, product, version;
 	controller_guid_string_decode(guid_str, &vendor, &product, &version);

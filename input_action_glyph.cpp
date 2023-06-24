@@ -33,7 +33,7 @@
 #include "core/input/input_map.h"
 #include "input_glyphs_singleton.h"
 
-int HBInputActionGlyph::_get_glyph_style_with_override() {
+int InputActionGlyph::_get_glyph_style_with_override() {
 	if (override_glyph_style) {
 		return glyph_style_override;
 	}
@@ -42,13 +42,13 @@ int HBInputActionGlyph::_get_glyph_style_with_override() {
 	return theme | abxy_overrides;
 }
 
-void HBInputActionGlyph::_queue_label_update() {
+void InputActionGlyph::_queue_label_update() {
 	if (!Engine::get_singleton()->is_editor_hint()) {
 		const InputMap::Action *action = InputMap::get_singleton()->get_action_map().getptr(action_name);
 		ERR_FAIL_COND_MSG(action == nullptr, vformat("InputActionGlyph: action %s does not exist.", action_name));
 		origin = HBInputOrigin::INPUT_ORIGIN_INVALID;
 		for (const Ref<InputEvent> &input_ev : action->inputs) {
-			origin = HBInputGlyphsSingleton::get_singleton()->get_origin_from_joy_event(input_ev);
+			origin = InputGlyphsSingleton::get_singleton()->get_origin_from_joy_event(input_ev);
 			if (origin > HBInputOrigin::INPUT_ORIGIN_INVALID) {
 				break;
 			}
@@ -58,25 +58,29 @@ void HBInputActionGlyph::_queue_label_update() {
 	}
 }
 
-void HBInputActionGlyph::_on_input_type_changed() {
+void InputActionGlyph::_on_input_type_changed() {
 	_queue_label_update();
 }
 
-void HBInputActionGlyph::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("set_override_glyph_style", "override_glyph_style"), &HBInputActionGlyph::set_override_glyph_style);
-	ClassDB::bind_method(D_METHOD("get_override_glyph_style"), &HBInputActionGlyph::get_override_glyph_style);
+void InputActionGlyph::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("set_override_glyph_style", "override_glyph_style"), &InputActionGlyph::set_override_glyph_style);
+	ClassDB::bind_method(D_METHOD("get_override_glyph_style"), &InputActionGlyph::get_override_glyph_style);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "override_glyph_style"), "set_override_glyph_style", "get_override_glyph_style");
 
-	ClassDB::bind_method(D_METHOD("set_glyph_style_override", "style"), &HBInputActionGlyph::set_glyph_style_override);
-	ClassDB::bind_method(D_METHOD("get_glyph_style_override"), &HBInputActionGlyph::get_glyph_style_override);
+	ClassDB::bind_method(D_METHOD("set_glyph_style_override", "style"), &InputActionGlyph::set_glyph_style_override);
+	ClassDB::bind_method(D_METHOD("get_glyph_style_override"), &InputActionGlyph::get_glyph_style_override);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "glyph_style_override", PROPERTY_HINT_FLAGS, "Light:1,Dark:2,Neutral ABXY:16,Solid ABXY:32", PROPERTY_USAGE_NO_EDITOR), "set_glyph_style_override", "get_glyph_style_override");
 
-	ClassDB::bind_method(D_METHOD("get_action_name"), &HBInputActionGlyph::get_action_name);
-	ClassDB::bind_method(D_METHOD("set_action_name", "action_name"), &HBInputActionGlyph::set_action_name);
+	ClassDB::bind_method(D_METHOD("get_action_name"), &InputActionGlyph::get_action_name);
+	ClassDB::bind_method(D_METHOD("set_action_name", "action_name"), &InputActionGlyph::set_action_name);
 	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "action_name", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NO_EDITOR), "set_action_name", "get_action_name");
+
+	ClassDB::bind_method(D_METHOD("set_text", "text"), &InputActionGlyph::set_text);
+	ClassDB::bind_method(D_METHOD("get_text"), &InputActionGlyph::get_text);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "text"), "set_text", "get_text");
 }
 
-void HBInputActionGlyph::_notification(int p_what) {
+void InputActionGlyph::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_READY: {
 			rtl = memnew(RichTextLabel);
@@ -84,14 +88,14 @@ void HBInputActionGlyph::_notification(int p_what) {
 			rtl->set_autowrap_mode(TextServer::AUTOWRAP_OFF);
 			rtl->set_fit_content(true);
 			_queue_label_update();
-			HBInputGlyphsSingleton::get_singleton()->connect("input_type_changed", callable_mp(this, &HBInputActionGlyph::_on_input_type_changed));
+			InputGlyphsSingleton::get_singleton()->connect("input_type_changed", callable_mp(this, &InputActionGlyph::_on_input_type_changed));
 		} break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
 			int glyph_style = _get_glyph_style_with_override();
-			if (!HBInputGlyphsSingleton::get_singleton()->has_glyph_texture(origin, glyph_style)) {
-				HBInputGlyphsSingleton::get_singleton()->request_glyph_texture_load(origin, glyph_style);
+			if (!InputGlyphsSingleton::get_singleton()->has_glyph_texture(origin, glyph_style)) {
+				InputGlyphsSingleton::get_singleton()->request_glyph_texture_load(origin, glyph_style);
 			} else {
-				glyph_texture = HBInputGlyphsSingleton::get_singleton()->get_glyph_texture(origin, glyph_style);
+				glyph_texture = InputGlyphsSingleton::get_singleton()->get_glyph_texture(origin, glyph_style);
 				rtl->clear();
 				rtl->add_image(glyph_texture);
 				rtl->add_text(text);
@@ -101,7 +105,7 @@ void HBInputActionGlyph::_notification(int p_what) {
 	}
 }
 
-bool HBInputActionGlyph::_set(const StringName &p_name, const Variant &p_value) {
+bool InputActionGlyph::_set(const StringName &p_name, const Variant &p_value) {
 	if (p_name == SNAME("style_override_theme")) {
 		int value = p_value;
 		glyph_style_override &= ~(0b11);
@@ -120,7 +124,7 @@ bool HBInputActionGlyph::_set(const StringName &p_name, const Variant &p_value) 
 	return false;
 }
 
-bool HBInputActionGlyph::_get(const StringName &p_name, Variant &r_ret) const {
+bool InputActionGlyph::_get(const StringName &p_name, Variant &r_ret) const {
 	if (p_name == SNAME("style_override_theme")) {
 		r_ret = glyph_style_override & 0b11;
 		return true;
@@ -140,7 +144,7 @@ bool HBInputActionGlyph::_get(const StringName &p_name, Variant &r_ret) const {
 	return false;
 }
 
-void HBInputActionGlyph::_get_property_list(List<PropertyInfo> *p_list) const {
+void InputActionGlyph::_get_property_list(List<PropertyInfo> *p_list) const {
 	if (override_glyph_style) {
 		p_list->push_back(PropertyInfo(Variant::INT, "style_override_theme", PROPERTY_HINT_ENUM, "Kockout,Light,Dark", PROPERTY_USAGE_EDITOR));
 		p_list->push_back(PropertyInfo(Variant::INT, "style_override_abx_overrides", PROPERTY_HINT_FLAGS, "Neutral Color ABXY:16, Solid ABXY:32", PROPERTY_USAGE_EDITOR));
@@ -154,40 +158,40 @@ void HBInputActionGlyph::_get_property_list(List<PropertyInfo> *p_list) const {
 	p_list->push_back(PropertyInfo(Variant::INT, "action", PROPERTY_HINT_ENUM, enum_values, PROPERTY_USAGE_EDITOR));
 }
 
-String HBInputActionGlyph::get_text() const {
+String InputActionGlyph::get_text() const {
 	return text;
 }
 
-void HBInputActionGlyph::set_text(const String &p_text) {
+void InputActionGlyph::set_text(const String &p_text) {
 	text = p_text;
 	_queue_label_update();
 }
 
-HBInputActionGlyph::HBInputActionGlyph() {
+InputActionGlyph::InputActionGlyph() {
 	_queue_label_update();
 }
 
-int HBInputActionGlyph::get_glyph_style_override() const {
+int InputActionGlyph::get_glyph_style_override() const {
 	return glyph_style_override;
 }
 
-void HBInputActionGlyph::set_glyph_style_override(const int &p_glyph_style_override) {
+void InputActionGlyph::set_glyph_style_override(const int &p_glyph_style_override) {
 	glyph_style_override = p_glyph_style_override;
 }
 
-StringName HBInputActionGlyph::get_action_name() const {
+StringName InputActionGlyph::get_action_name() const {
 	return action_name;
 }
 
-void HBInputActionGlyph::set_action_name(const StringName &p_action_name) {
+void InputActionGlyph::set_action_name(const StringName &p_action_name) {
 	action_name = p_action_name;
 }
 
-bool HBInputActionGlyph::get_override_glyph_style() const {
+bool InputActionGlyph::get_override_glyph_style() const {
 	return override_glyph_style;
 }
 
-void HBInputActionGlyph::set_override_glyph_style(bool p_override_glyph_style) {
+void InputActionGlyph::set_override_glyph_style(bool p_override_glyph_style) {
 	override_glyph_style = p_override_glyph_style;
 	notify_property_list_changed();
 	_queue_label_update();

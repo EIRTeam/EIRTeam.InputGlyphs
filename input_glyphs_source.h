@@ -35,27 +35,27 @@
 #include "input_glyphs.h"
 #include "scene/resources/texture.h"
 
-class HBInputGlyphsSource : public RefCounted {
-	GDCLASS(HBInputGlyphsSource, RefCounted);
+class InputGlyphsSource : public RefCounted {
+	GDCLASS(InputGlyphsSource, RefCounted);
 
 protected:
-	static Ref<HBInputGlyphsSource> (*_create_func)();
+	static Ref<InputGlyphsSource> (*_create_func)();
 
 public:
 	virtual Ref<Texture2D> get_input_glyph(const HBInputType &p_input_type, const HBInputOrigin &p_input_origin, const int &p_glyphs_style, const HBInputGlyphSize &p_size) = 0;
-	static Ref<HBInputGlyphsSource> create();
+	static Ref<InputGlyphsSource> create();
 	virtual HBInputType identify_joy(int p_device) const = 0;
 };
 
-class HBInputGlyphsSourceBuiltin : public HBInputGlyphsSource {
-	GDCLASS(HBInputGlyphsSourceBuiltin, HBInputGlyphsSource);
+class InputGlyphsSourceBuiltin : public InputGlyphsSource {
+	GDCLASS(InputGlyphsSourceBuiltin, InputGlyphsSource);
 
 private:
 	virtual Ref<Texture2D> get_input_glyph(const HBInputType &p_input_type, const HBInputOrigin &p_input_origin, const int &p_glyphs_style, const HBInputGlyphSize &p_size) override;
 
 public:
-	static Ref<HBInputGlyphsSource> _create_current() {
-		Ref<HBInputGlyphsSourceBuiltin> ref;
+	static Ref<InputGlyphsSource> _create_current() {
+		Ref<InputGlyphsSourceBuiltin> ref;
 		ref.instantiate();
 		return ref;
 	}

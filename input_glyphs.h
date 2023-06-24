@@ -51,8 +51,6 @@ VARIANT_ENUM_CAST(HBInputType);
 
 // TODO:
 // d-pad move
-// Xbox one grips
-// Investigate PS5 fn
 enum HBInputOrigin {
 	INPUT_ORIGIN_INVALID = -1,
 	INPUT_ORIGIN_A,
@@ -92,6 +90,7 @@ enum HBInputOrigin {
 	INPUT_ORIGIN_TRACKPAD_CLICK,
 	INPUT_ORIGIN_COUNT,
 };
+VARIANT_ENUM_CAST(HBInputOrigin);
 
 namespace HBInputGlyphs {
 const HBInputOrigin godot_button_to_input_origin_lut[] = {
@@ -119,8 +118,6 @@ const HBInputOrigin godot_button_to_input_origin_lut[] = {
 };
 static_assert(std::size(godot_button_to_input_origin_lut) == (int)JoyButton::SDL_MAX);
 }; //namespace HBInputGlyphs
-
-VARIANT_ENUM_CAST(HBInputOrigin);
 
 static const char *_debug_input_origin_names[] = {
 	"INPUT_ORIGIN_A",
@@ -182,5 +179,6 @@ enum HBInputGlyphSize {
 	GLYPH_SIZE_LARGE,
 	GLYPH_SIZE_MAX,
 };
+VARIANT_ENUM_CAST(HBInputGlyphSize);
 
 #endif // INPUT_GLYPHS_H

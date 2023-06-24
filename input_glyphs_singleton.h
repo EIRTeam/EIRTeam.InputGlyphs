@@ -50,8 +50,8 @@ static GlyphUID calculate_guid(const HBInputOrigin &p_input_origin, const int &p
 }
 } //namespace HBInputGlyphs
 
-class HBInputGlyphsSingleton : public Object {
-	GDCLASS(HBInputGlyphsSingleton, Object);
+class InputGlyphsSingleton : public Object {
+	GDCLASS(InputGlyphsSingleton, Object);
 
 	struct GlyphInfo {
 		HBInputOrigin origin;
@@ -79,11 +79,11 @@ class HBInputGlyphsSingleton : public Object {
 	static void _join_task(WorkerThreadPool::TaskID p_task_id);
 	static void _glyph_loaded_callback(GlyphLoadTask *p_task);
 
-	static HBInputGlyphsSingleton *singleton;
+	static InputGlyphsSingleton *singleton;
 	void _input_event(const Ref<InputEvent> &p_input_event);
 
 public:
-	Ref<HBInputGlyphsSource> glyph_source;
+	Ref<InputGlyphsSource> glyph_source;
 
 private:
 	HBInputType current_input_type = HBInputType::UNKNOWN;
@@ -100,13 +100,12 @@ protected:
 
 public:
 	void init();
-	bool has_glyph_texture(const HBInputOrigin &p_input_origin, const int &p_style, const HBInputGlyphSize &p_size = HBInputGlyphSize::GLYPH_SIZE_MAX);
-	Ref<Texture2D> get_glyph_texture(const HBInputOrigin &p_input_origin, const int &p_style, const HBInputGlyphSize &p_size = HBInputGlyphSize::GLYPH_SIZE_MAX);
-	void request_glyph_texture_load(const HBInputOrigin &p_input_origin, const int &p_style, const HBInputGlyphSize &p_size = HBInputGlyphSize::GLYPH_SIZE_MAX);
+	bool has_glyph_texture(const HBInputOrigin p_input_origin, const int &p_style, const HBInputGlyphSize p_size = HBInputGlyphSize::GLYPH_SIZE_MAX);
+	Ref<Texture2D> get_glyph_texture(const HBInputOrigin p_input_origin, const int &p_style, const HBInputGlyphSize p_size = HBInputGlyphSize::GLYPH_SIZE_MAX);
+	void request_glyph_texture_load(const HBInputOrigin p_input_origin, const int &p_style, const HBInputGlyphSize p_size = HBInputGlyphSize::GLYPH_SIZE_MAX);
 	HBInputOrigin get_origin_from_joy_event(const Ref<InputEvent> &p_input_event) const;
-	static HBInputGlyphsSingleton *get_singleton();
-	void notify_input_map_changed();
-	HBInputGlyphsSingleton();
+	static InputGlyphsSingleton *get_singleton();
+	InputGlyphsSingleton();
 };
 
 #endif // INPUT_GLYPHS_SINGLETON_H

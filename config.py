@@ -12,4 +12,4 @@ def get_doc_path():
 
 
 def get_doc_classes():
-    return ["HBInputGlyphsSingleton", "HBInputGlyphIcon", "HBInputActionGlyph"]
+    return ["InputGlyphsSingleton", "InputGlyphTextureRect", "InputActionGlyph"]
