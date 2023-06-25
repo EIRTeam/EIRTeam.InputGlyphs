@@ -42,6 +42,10 @@
 			</description>
 		</method>
 	</methods>
+	<members>
+		<member name="forced_input_type" type="int" setter="set_forced_input_type" getter="get_forced_input_type" enum="HBInputType">
+		</member>
+	</members>
 	<signals>
 		<signal name="input_type_changed">
 			<description>

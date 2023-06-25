@@ -63,15 +63,20 @@ void InputGlyphsSingleton::init() {
 
 void InputGlyphsSingleton::_input_event(const Ref<InputEvent> &p_input_event) {
 	Ref<InputEventJoypadButton> joypad_button = p_input_event;
-	if (joypad_button.is_valid()) {
+	if (joypad_button.is_valid() && forced_input_type != HBInputType::UNKNOWN) {
 		HBInputType new_input_type = glyph_source->identify_joy(joypad_button->get_device());
 		if (current_input_type != new_input_type) {
 			current_input_type = new_input_type;
-			if (forced_input_type == HBInputType::UNKNOWN) {
-				_on_input_type_changed();
-			}
+			_on_input_type_changed();
 		}
 	}
+}
+
+HBInputType InputGlyphsSingleton::_get_input_type() const {
+	if (forced_input_type != HBInputType::UNKNOWN) {
+		return forced_input_type;
+	}
+	return current_input_type;
 }
 
 void InputGlyphsSingleton::_load_glyph_thread(void *p_userdata) {
@@ -163,6 +168,10 @@ void InputGlyphsSingleton::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_glyph_texture", "input_origin", "style", "size"), &InputGlyphsSingleton::get_glyph_texture, DEFVAL(HBInputGlyphSize::GLYPH_SIZE_MAX));
 	ClassDB::bind_method(D_METHOD("request_glyph_texture_load", "input_origin", "style", "size"), &InputGlyphsSingleton::request_glyph_texture_load, DEFVAL(HBInputGlyphSize::GLYPH_SIZE_MAX));
 	ClassDB::bind_method(D_METHOD("get_origin_from_joy_event", "input_event"), &InputGlyphsSingleton::get_origin_from_joy_event);
+
+	ClassDB::bind_method(D_METHOD("set_forced_input_type", "forced_input_type"), &InputGlyphsSingleton::set_forced_input_type);
+	ClassDB::bind_method(D_METHOD("get_forced_input_type"), &InputGlyphsSingleton::get_forced_input_type);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "forced_input_type"), "set_forced_input_type", "get_forced_input_type");
 }
 
 bool InputGlyphsSingleton::has_glyph_texture(const HBInputOrigin p_input_origin, const int &p_style, const HBInputGlyphSize p_size) {
@@ -207,7 +216,7 @@ void InputGlyphsSingleton::request_glyph_texture_load(const HBInputOrigin p_inpu
 	load_task->glyph_info.size = size;
 	load_task->glyph_info.style = p_style;
 
-	load_task->input_type = forced_input_type != HBInputType::UNKNOWN ? forced_input_type : current_input_type;
+	load_task->input_type = _get_input_type();
 	load_task->task_id = WorkerThreadPool::get_singleton()->add_native_task(&_load_glyph_thread, load_task, false, "Load glyph");
 	current_tasks.insert(load_task->glyph_info.get_uid(), load_task);
 }
@@ -223,6 +232,18 @@ HBInputOrigin InputGlyphsSingleton::get_origin_from_joy_event(const Ref<InputEve
 	// TODO: Implement input event joy motion
 	//Ref<InputEventJoypadMotion> joy_motion = p_input_event;
 	return origin;
+}
+
+void InputGlyphsSingleton::set_forced_input_type(HBInputType p_force_input_type) {
+	HBInputType input_type = _get_input_type();
+	forced_input_type = p_force_input_type;
+	if (input_type != p_force_input_type) {
+		_on_input_type_changed();
+	}
+}
+
+HBInputType InputGlyphsSingleton::get_forced_input_type() const {
+	return forced_input_type;
 }
 
 InputGlyphsSingleton *InputGlyphsSingleton::get_singleton() {

@@ -81,6 +81,7 @@ class InputGlyphsSingleton : public Object {
 
 	static InputGlyphsSingleton *singleton;
 	void _input_event(const Ref<InputEvent> &p_input_event);
+	HBInputType _get_input_type() const;
 
 public:
 	Ref<InputGlyphsSource> glyph_source;
@@ -104,6 +105,8 @@ public:
 	Ref<Texture2D> get_glyph_texture(const HBInputOrigin p_input_origin, const int &p_style, const HBInputGlyphSize p_size = HBInputGlyphSize::GLYPH_SIZE_MAX);
 	void request_glyph_texture_load(const HBInputOrigin p_input_origin, const int &p_style, const HBInputGlyphSize p_size = HBInputGlyphSize::GLYPH_SIZE_MAX);
 	HBInputOrigin get_origin_from_joy_event(const Ref<InputEvent> &p_input_event) const;
+	void set_forced_input_type(HBInputType p_force_input_type);
+	HBInputType get_forced_input_type() const;
 	static InputGlyphsSingleton *get_singleton();
 	InputGlyphsSingleton();
 };
