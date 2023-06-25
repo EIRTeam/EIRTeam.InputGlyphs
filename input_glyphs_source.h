@@ -42,16 +42,16 @@ protected:
 	static Ref<InputGlyphsSource> (*_create_func)();
 
 public:
-	virtual Ref<Texture2D> get_input_glyph(const HBInputType &p_input_type, const HBInputOrigin &p_input_origin, const BitField<HBInputGlyphStyle> &p_glyphs_style, const HBInputGlyphSize &p_size) = 0;
+	virtual Ref<Texture2D> get_input_glyph(const InputType &p_input_type, const InputOrigin &p_input_origin, const BitField<InputGlyphStyle> &p_glyphs_style, const InputGlyphSize &p_size) = 0;
 	static Ref<InputGlyphsSource> create();
-	virtual HBInputType identify_joy(int p_device) const = 0;
+	virtual InputType identify_joy(int p_device) const = 0;
 };
 
 class InputGlyphsSourceBuiltin : public InputGlyphsSource {
 	GDCLASS(InputGlyphsSourceBuiltin, InputGlyphsSource);
 
 private:
-	virtual Ref<Texture2D> get_input_glyph(const HBInputType &p_input_type, const HBInputOrigin &p_input_origin, const BitField<HBInputGlyphStyle> &p_glyphs_style, const HBInputGlyphSize &p_size) override;
+	virtual Ref<Texture2D> get_input_glyph(const InputType &p_input_type, const InputOrigin &p_input_origin, const BitField<InputGlyphStyle> &p_glyphs_style, const InputGlyphSize &p_size) override;
 
 public:
 	static Ref<InputGlyphsSource> _create_current() {
@@ -63,7 +63,7 @@ public:
 	static void make_current() {
 		_create_func = _create_current;
 	}
-	virtual HBInputType identify_joy(int identify_joy) const override;
+	virtual InputType identify_joy(int identify_joy) const override;
 };
 
 #endif // INPUT_GLYPHS_SOURCE_H

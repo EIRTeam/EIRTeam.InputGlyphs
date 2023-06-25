@@ -39,13 +39,13 @@ class InputGlyphTextureRect : public TextureRect {
 
 private:
 	bool override_glyph_style = false;
-	int glyph_style_override = HBInputGlyphStyle::GLYPH_STYLE_KNOCKOUT;
-	HBInputOrigin origin = HBInputOrigin::INPUT_ORIGIN_A;
+	int glyph_style_override = InputGlyphStyle::GLYPH_STYLE_KNOCKOUT;
+	InputOrigin origin = InputOrigin::INPUT_ORIGIN_A;
 	StringName action_name = "ui_left";
 
 	int _get_glyph_style_with_override() const;
 	void _queue_texture_update();
-	void _on_input_type_changed();
+	void _on_input_glyphs_changed();
 
 protected:
 	static void _bind_methods();

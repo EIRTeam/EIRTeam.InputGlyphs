@@ -41,16 +41,16 @@ class InputActionGlyph : public CenterContainer {
 	Ref<Texture2D> glyph_texture;
 	String text = "";
 	StringName action_name = "ui_left";
-	HBInputOrigin origin = HBInputOrigin::INPUT_ORIGIN_A;
+	InputOrigin origin = InputOrigin::INPUT_ORIGIN_A;
 
 	bool override_glyph_style = false;
 
-	int glyph_style_override = HBInputGlyphStyle::GLYPH_STYLE_KNOCKOUT;
+	int glyph_style_override = InputGlyphStyle::GLYPH_STYLE_KNOCKOUT;
 
 	int _get_glyph_style_with_override();
 
 	void _queue_label_update();
-	void _on_input_type_changed();
+	void _on_input_glyphs_changed();
 
 protected:
 	static void _bind_methods();

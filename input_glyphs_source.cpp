@@ -43,7 +43,7 @@ Ref<InputGlyphsSource> InputGlyphsSource::create() {
 	return _create_func();
 }
 
-Ref<Texture2D> InputGlyphsSourceBuiltin::get_input_glyph(const HBInputType &p_input_type, const HBInputOrigin &p_input_origin, const BitField<HBInputGlyphStyle> &p_glyphs_style, const HBInputGlyphSize &p_size) {
+Ref<Texture2D> InputGlyphsSourceBuiltin::get_input_glyph(const InputType &p_input_type, const InputOrigin &p_input_origin, const BitField<InputGlyphStyle> &p_glyphs_style, const InputGlyphSize &p_size) {
 	int theme = p_glyphs_style & 0b11;
 	int abxy_overrides = p_glyphs_style & 0b110000;
 	abxy_overrides = abxy_overrides >> 4;
@@ -70,7 +70,7 @@ Ref<Texture2D> InputGlyphsSourceBuiltin::get_input_glyph(const HBInputType &p_in
 
 	int svg_index = -1;
 
-	if (p_input_origin <= HBInputOrigin::INPUT_ORIGIN_Y && abxy_overrides != 0) {
+	if (p_input_origin <= InputOrigin::INPUT_ORIGIN_Y && abxy_overrides != 0) {
 		svg_index = __glyph_icons_abxy_override_map[p_input_type][theme][((abxy_overrides - 1) * 4) + p_input_origin];
 	} else {
 		svg_index = __glyph_icons_map[p_input_type][theme][p_input_origin];
@@ -140,17 +140,17 @@ void controller_guid_string_decode(const String &p_guid_str, uint16_t *vendor, u
 	*version = guid_16[6];
 }
 
-HBInputType InputGlyphsSourceBuiltin::identify_joy(int p_controller_idx) const {
+InputType InputGlyphsSourceBuiltin::identify_joy(int p_controller_idx) const {
 	String guid_str = Input::get_singleton()->get_joy_guid(p_controller_idx);
 	uint16_t vendor, product, version;
 	controller_guid_string_decode(guid_str, &vendor, &product, &version);
 	uint64_t controller_id = MAKE_CONTROLLER_ID(vendor, product);
 
-	for (int i = 0; i < std::size(arrControllers); i++) {
+	for (int i = 0; i < (int)std::size(arrControllers); i++) {
 		if (arrControllers[i].device_id == controller_id) {
 			return arrControllers[i].controller_type;
 		}
 	}
 
-	return HBInputType::UNKNOWN;
+	return InputType::UNKNOWN;
 }

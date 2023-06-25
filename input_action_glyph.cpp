@@ -46,19 +46,19 @@ void InputActionGlyph::_queue_label_update() {
 	if (!Engine::get_singleton()->is_editor_hint()) {
 		const InputMap::Action *action = InputMap::get_singleton()->get_action_map().getptr(action_name);
 		ERR_FAIL_COND_MSG(action == nullptr, vformat("InputActionGlyph: action %s does not exist.", action_name));
-		origin = HBInputOrigin::INPUT_ORIGIN_INVALID;
+		origin = InputOrigin::INPUT_ORIGIN_INVALID;
 		for (const Ref<InputEvent> &input_ev : action->inputs) {
 			origin = InputGlyphsSingleton::get_singleton()->get_origin_from_joy_event(input_ev);
-			if (origin > HBInputOrigin::INPUT_ORIGIN_INVALID) {
+			if (origin > InputOrigin::INPUT_ORIGIN_INVALID) {
 				break;
 			}
 		}
-		ERR_FAIL_COND_MSG(origin == HBInputOrigin::INPUT_ORIGIN_INVALID, vformat("InputActionGlyph: Couldn't find an input origin for action %s. Using a placeholder instead.", action_name));
+		ERR_FAIL_COND_MSG(origin == InputOrigin::INPUT_ORIGIN_INVALID, vformat("InputActionGlyph: Couldn't find an input origin for action %s. Using a placeholder instead.", action_name));
 		set_process_internal(true);
 	}
 }
 
-void InputActionGlyph::_on_input_type_changed() {
+void InputActionGlyph::_on_input_glyphs_changed() {
 	_queue_label_update();
 }
 
@@ -88,7 +88,7 @@ void InputActionGlyph::_notification(int p_what) {
 			rtl->set_autowrap_mode(TextServer::AUTOWRAP_OFF);
 			rtl->set_fit_content(true);
 			_queue_label_update();
-			InputGlyphsSingleton::get_singleton()->connect("input_type_changed", callable_mp(this, &InputActionGlyph::_on_input_type_changed));
+			InputGlyphsSingleton::get_singleton()->connect("input_glyphs_changed", callable_mp(this, &InputActionGlyph::_on_input_glyphs_changed));
 		} break;
 		case NOTIFICATION_INTERNAL_PROCESS: {
 			int glyph_style = _get_glyph_style_with_override();

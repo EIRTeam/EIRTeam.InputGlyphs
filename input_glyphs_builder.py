@@ -74,10 +74,10 @@ def make_glyphs_header(target, source, env):
         input_type_graphics_abxy_override_string = StringIO()
 
         input_type_graphics_string.write(
-            "static const int __glyph_icons_map[HBInputType::INPUT_TYPE_MAX][HBInputGlyphStyle::GLYPH_STYLE_THEME_COUNT][HBInputOrigin::INPUT_ORIGIN_COUNT] = {\n"
+            "static const int __glyph_icons_map[InputType::INPUT_TYPE_MAX][InputGlyphStyle::GLYPH_STYLE_THEME_COUNT][InputOrigin::INPUT_ORIGIN_COUNT] = {\n"
         )
         input_type_graphics_abxy_override_string.write(
-            "static const int __glyph_icons_abxy_override_map[HBInputType::INPUT_TYPE_MAX][HBInputGlyphStyle::GLYPH_STYLE_THEME_COUNT][3*4] = {\n"
+            "static const int __glyph_icons_abxy_override_map[InputType::INPUT_TYPE_MAX][InputGlyphStyle::GLYPH_STYLE_THEME_COUNT][3*4] = {\n"
         )
 
         for input_type in input_type_infos:

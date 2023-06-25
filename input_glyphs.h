@@ -34,7 +34,7 @@
 #include "core/variant/binder_common.h"
 #include <iterator>
 
-enum HBInputType {
+enum InputType {
 	UNKNOWN,
 	STEAM_CONTROLLER,
 	XBOX_360_CONTROLLER,
@@ -47,11 +47,11 @@ enum HBInputType {
 	STEAM_DECK_CONTROLLER,
 	INPUT_TYPE_MAX
 };
-VARIANT_ENUM_CAST(HBInputType);
+VARIANT_ENUM_CAST(InputType);
 
 // TODO:
 // d-pad move
-enum HBInputOrigin {
+enum InputOrigin {
 	INPUT_ORIGIN_INVALID = -1,
 	INPUT_ORIGIN_A,
 	INPUT_ORIGIN_B,
@@ -90,10 +90,10 @@ enum HBInputOrigin {
 	INPUT_ORIGIN_TRACKPAD_CLICK,
 	INPUT_ORIGIN_COUNT,
 };
-VARIANT_ENUM_CAST(HBInputOrigin);
+VARIANT_ENUM_CAST(InputOrigin);
 
-namespace HBInputGlyphs {
-const HBInputOrigin godot_button_to_input_origin_lut[] = {
+namespace InputGlyphTables {
+const InputOrigin godot_button_to_input_origin_lut[] = {
 	INPUT_ORIGIN_A,
 	INPUT_ORIGIN_B,
 	INPUT_ORIGIN_X,
@@ -117,7 +117,6 @@ const HBInputOrigin godot_button_to_input_origin_lut[] = {
 	INPUT_ORIGIN_TRACKPAD_CLICK,
 };
 static_assert(std::size(godot_button_to_input_origin_lut) == (int)JoyButton::SDL_MAX);
-}; //namespace HBInputGlyphs
 
 static const char *_debug_input_origin_names[] = {
 	"INPUT_ORIGIN_A",
@@ -157,9 +156,10 @@ static const char *_debug_input_origin_names[] = {
 	"INPUT_ORIGIN_TRACKPAD_CLICK",
 };
 
-static_assert(std::size(_debug_input_origin_names) == HBInputOrigin::INPUT_ORIGIN_COUNT);
+static_assert(std::size(_debug_input_origin_names) == InputOrigin::INPUT_ORIGIN_COUNT);
+}; //namespace InputGlyphTables
 
-enum HBInputGlyphStyle {
+enum InputGlyphStyle {
 	// Base-styles - cannot mix
 	GLYPH_STYLE_KNOCKOUT = 0x0,
 	GLYPH_STYLE_LIGHT = 0x1,
@@ -171,14 +171,14 @@ enum HBInputGlyphStyle {
 	GLYPH_STYLE_SOLID_ABXY = 0x20, // ABXY Buttons will have a solid fill
 };
 
-VARIANT_BITFIELD_CAST(HBInputGlyphStyle);
+VARIANT_BITFIELD_CAST(InputGlyphStyle);
 
-enum HBInputGlyphSize {
+enum InputGlyphSize {
 	GLYPH_SIZE_SMALL,
 	GLYPH_SIZE_MEDIUM,
 	GLYPH_SIZE_LARGE,
 	GLYPH_SIZE_MAX,
 };
-VARIANT_ENUM_CAST(HBInputGlyphSize);
+VARIANT_ENUM_CAST(InputGlyphSize);
 
 #endif // INPUT_GLYPHS_H

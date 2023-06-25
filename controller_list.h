@@ -36,27 +36,27 @@
 typedef struct
 {
 	unsigned int device_id;
-	HBInputType controller_type;
+	InputType controller_type;
 	const char *name;
 } ControllerDescription_t;
 
-#define k_eControllerType_PS3Controller HBInputType::PS3_CONTROLLER
-#define k_eControllerType_PS4Controller HBInputType::PS4_CONTROLLER
-#define k_eControllerType_PS5Controller HBInputType::PS5_CONTROLLER
-#define k_eControllerType_XInputPS4Controller HBInputType::PS4_CONTROLLER
-#define k_eControllerType_UnknownNonSteamController HBInputType::UNKNOWN
-#define k_eControllerType_XBox360Controller HBInputType::XBOX_360_CONTROLLER
-#define k_eControllerType_XBoxOneController HBInputType::XBOX_ONE_CONTROLLER
-#define k_eControllerType_AppleController HBInputType::GENERIC_XINPUT_CONTROLLER
-#define k_eControllerType_SwitchJoyConLeft HBInputType::SWITCH_PRO_CONTROLLER
-#define k_eControllerType_SwitchJoyConRight HBInputType::SWITCH_PRO_CONTROLLER
-#define k_eControllerType_SwitchJoyConPair HBInputType::SWITCH_PRO_CONTROLLER
-#define k_eControllerType_SwitchProController HBInputType::SWITCH_PRO_CONTROLLER
-#define k_eControllerType_SwitchInputOnlyController HBInputType::SWITCH_PRO_CONTROLLER
-#define k_eControllerType_XInputSwitchController HBInputType::SWITCH_PRO_CONTROLLER
-#define k_eControllerType_MobileTouch HBInputType::STEAM_CONTROLLER
-#define k_eControllerType_SteamController HBInputType::STEAM_CONTROLLER
-#define k_eControllerType_SteamControllerV2 HBInputType::STEAM_CONTROLLER
+#define k_eControllerType_PS3Controller InputType::PS3_CONTROLLER
+#define k_eControllerType_PS4Controller InputType::PS4_CONTROLLER
+#define k_eControllerType_PS5Controller InputType::PS5_CONTROLLER
+#define k_eControllerType_XInputPS4Controller InputType::PS4_CONTROLLER
+#define k_eControllerType_UnknownNonSteamController InputType::UNKNOWN
+#define k_eControllerType_XBox360Controller InputType::XBOX_360_CONTROLLER
+#define k_eControllerType_XBoxOneController InputType::XBOX_ONE_CONTROLLER
+#define k_eControllerType_AppleController InputType::GENERIC_XINPUT_CONTROLLER
+#define k_eControllerType_SwitchJoyConLeft InputType::SWITCH_PRO_CONTROLLER
+#define k_eControllerType_SwitchJoyConRight InputType::SWITCH_PRO_CONTROLLER
+#define k_eControllerType_SwitchJoyConPair InputType::SWITCH_PRO_CONTROLLER
+#define k_eControllerType_SwitchProController InputType::SWITCH_PRO_CONTROLLER
+#define k_eControllerType_SwitchInputOnlyController InputType::SWITCH_PRO_CONTROLLER
+#define k_eControllerType_XInputSwitchController InputType::SWITCH_PRO_CONTROLLER
+#define k_eControllerType_MobileTouch InputType::STEAM_CONTROLLER
+#define k_eControllerType_SteamController InputType::STEAM_CONTROLLER
+#define k_eControllerType_SteamControllerV2 InputType::STEAM_CONTROLLER
 
 #include "thirdparty/controller_list_sdl.h"
 

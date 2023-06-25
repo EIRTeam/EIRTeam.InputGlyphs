@@ -42,7 +42,7 @@ void InputGlyphsSingleton::_glyph_loaded_callback(GlyphLoadTask *p_task) {
 	InputGlyphsSingleton *igs = InputGlyphsSingleton::get_singleton();
 	p_task->task_mutex.lock();
 	igs->mutex.lock();
-	HBInputGlyphs::GlyphUID uid = p_task->glyph_info.get_uid();
+	InputGlyphs::GlyphUID uid = p_task->glyph_info.get_uid();
 	if (igs->current_tasks.has(uid) && !p_task->aborted) {
 		igs->loaded_glyphs.insert(uid, p_task->texture);
 		igs->current_tasks.erase(uid);
@@ -57,23 +57,23 @@ void InputGlyphsSingleton::init() {
 	SceneTree::get_singleton()->get_root()->connect("window_input", callable_mp(this, &InputGlyphsSingleton::_input_event));
 	glyph_source = InputGlyphsSource::create();
 	if (glyph_source.is_valid()) {
-		_on_input_type_changed();
+		_on_input_glyphs_changed();
 	}
 }
 
 void InputGlyphsSingleton::_input_event(const Ref<InputEvent> &p_input_event) {
 	Ref<InputEventJoypadButton> joypad_button = p_input_event;
-	if (joypad_button.is_valid() && forced_input_type != HBInputType::UNKNOWN) {
-		HBInputType new_input_type = glyph_source->identify_joy(joypad_button->get_device());
+	if (joypad_button.is_valid() && forced_input_type != InputType::UNKNOWN) {
+		InputType new_input_type = glyph_source->identify_joy(joypad_button->get_device());
 		if (current_input_type != new_input_type) {
 			current_input_type = new_input_type;
-			_on_input_type_changed();
+			_on_input_glyphs_changed();
 		}
 	}
 }
 
-HBInputType InputGlyphsSingleton::_get_input_type() const {
-	if (forced_input_type != HBInputType::UNKNOWN) {
+InputType InputGlyphsSingleton::_get_input_type() const {
+	if (forced_input_type != InputType::UNKNOWN) {
 		return forced_input_type;
 	}
 	return current_input_type;
@@ -93,10 +93,10 @@ void InputGlyphsSingleton::_load_glyph_thread(void *p_userdata) {
 	_glyph_loaded_callback(task);
 }
 
-void InputGlyphsSingleton::_on_input_type_changed() {
+void InputGlyphsSingleton::_on_input_glyphs_changed() {
 	// Abort all current loadings, if any
 	MutexLock lock(mutex);
-	for (KeyValue<HBInputGlyphs::GlyphUID, GlyphLoadTask *> kv : current_tasks) {
+	for (KeyValue<InputGlyphs::GlyphUID, GlyphLoadTask *> kv : current_tasks) {
 		kv.value->task_mutex.lock();
 		kv.value->aborted = true;
 		kv.value->task_mutex.unlock();
@@ -104,11 +104,11 @@ void InputGlyphsSingleton::_on_input_type_changed() {
 	current_tasks.clear();
 	// Clean loaded glyphs
 	loaded_glyphs.clear();
-	emit_signal("input_type_changed");
+	emit_signal("input_glyphs_changed");
 }
 
 void InputGlyphsSingleton::_bind_methods() {
-	ADD_SIGNAL(MethodInfo("input_type_changed"));
+	ADD_SIGNAL(MethodInfo("input_glyphs_changed"));
 	BIND_ENUM_CONSTANT(INPUT_ORIGIN_INVALID);
 	BIND_ENUM_CONSTANT(INPUT_ORIGIN_A);
 	BIND_ENUM_CONSTANT(INPUT_ORIGIN_B);
@@ -171,18 +171,20 @@ void InputGlyphsSingleton::_bind_methods() {
 	BIND_BITFIELD_FLAG(GLYPH_STYLE_NEUTRAL_COLOR_ABXY);
 	BIND_BITFIELD_FLAG(GLYPH_STYLE_SOLID_ABXY);
 
-	ClassDB::bind_method(D_METHOD("has_glyph_texture", "input_origin", "style", "size"), &InputGlyphsSingleton::has_glyph_texture, DEFVAL(HBInputGlyphSize::GLYPH_SIZE_MAX));
-	ClassDB::bind_method(D_METHOD("get_glyph_texture", "input_origin", "style", "size"), &InputGlyphsSingleton::get_glyph_texture, DEFVAL(HBInputGlyphSize::GLYPH_SIZE_MAX));
-	ClassDB::bind_method(D_METHOD("request_glyph_texture_load", "input_origin", "style", "size"), &InputGlyphsSingleton::request_glyph_texture_load, DEFVAL(HBInputGlyphSize::GLYPH_SIZE_MAX));
+	ClassDB::bind_method(D_METHOD("has_glyph_texture", "input_origin", "style", "size"), &InputGlyphsSingleton::has_glyph_texture, DEFVAL(InputGlyphSize::GLYPH_SIZE_MAX));
+	ClassDB::bind_method(D_METHOD("get_glyph_texture", "input_origin", "style", "size"), &InputGlyphsSingleton::get_glyph_texture, DEFVAL(InputGlyphSize::GLYPH_SIZE_MAX));
+	ClassDB::bind_method(D_METHOD("request_glyph_texture_load", "input_origin", "style", "size"), &InputGlyphsSingleton::request_glyph_texture_load, DEFVAL(InputGlyphSize::GLYPH_SIZE_MAX));
 	ClassDB::bind_method(D_METHOD("get_origin_from_joy_event", "input_event"), &InputGlyphsSingleton::get_origin_from_joy_event);
 
 	ClassDB::bind_method(D_METHOD("set_forced_input_type", "forced_input_type"), &InputGlyphsSingleton::set_forced_input_type);
 	ClassDB::bind_method(D_METHOD("get_forced_input_type"), &InputGlyphsSingleton::get_forced_input_type);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "forced_input_type"), "set_forced_input_type", "get_forced_input_type");
+
+	ClassDB::bind_method(D_METHOD("input_type_to_localized_string", "input_type"), &InputGlyphsSingleton::input_type_to_localized_string);
 }
 
-bool InputGlyphsSingleton::has_glyph_texture(const HBInputOrigin p_input_origin, BitField<HBInputGlyphStyle> p_style, const HBInputGlyphSize p_size) {
-	HBInputGlyphSize size = p_size == HBInputGlyphSize::GLYPH_SIZE_MAX ? default_glyph_size : p_size;
+bool InputGlyphsSingleton::has_glyph_texture(const InputOrigin p_input_origin, BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
+	InputGlyphSize size = p_size == InputGlyphSize::GLYPH_SIZE_MAX ? default_glyph_size : p_size;
 	GlyphInfo info;
 	info.origin = p_input_origin;
 	info.style = p_style;
@@ -191,22 +193,22 @@ bool InputGlyphsSingleton::has_glyph_texture(const HBInputOrigin p_input_origin,
 	return loaded_glyphs.has(info.get_uid());
 }
 
-Ref<Texture2D> InputGlyphsSingleton::get_glyph_texture(const HBInputOrigin p_input_origin, const BitField<HBInputGlyphStyle> p_style, const HBInputGlyphSize p_size) {
-	HBInputGlyphSize size = p_size == HBInputGlyphSize::GLYPH_SIZE_MAX ? default_glyph_size : p_size;
+Ref<Texture2D> InputGlyphsSingleton::get_glyph_texture(const InputOrigin p_input_origin, const BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
+	InputGlyphSize size = p_size == InputGlyphSize::GLYPH_SIZE_MAX ? default_glyph_size : p_size;
 	GlyphInfo info;
 	info.origin = p_input_origin;
 	info.style = p_style;
 	info.size = size;
 
 	MutexLock lock(mutex);
-	HBInputGlyphs::GlyphUID uid = info.get_uid();
+	InputGlyphs::GlyphUID uid = info.get_uid();
 	ERR_FAIL_COND_V(!loaded_glyphs.has(uid), memnew(ImageTexture));
 
 	return loaded_glyphs[uid];
 }
 
-void InputGlyphsSingleton::request_glyph_texture_load(const HBInputOrigin p_input_origin, const BitField<HBInputGlyphStyle> p_style, const HBInputGlyphSize p_size) {
-	HBInputGlyphSize size = p_size == HBInputGlyphSize::GLYPH_SIZE_MAX ? default_glyph_size : p_size;
+void InputGlyphsSingleton::request_glyph_texture_load(const InputOrigin p_input_origin, const BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
+	InputGlyphSize size = p_size == InputGlyphSize::GLYPH_SIZE_MAX ? default_glyph_size : p_size;
 	GlyphInfo info;
 	info.origin = p_input_origin;
 	info.style = p_style;
@@ -228,12 +230,12 @@ void InputGlyphsSingleton::request_glyph_texture_load(const HBInputOrigin p_inpu
 	current_tasks.insert(load_task->glyph_info.get_uid(), load_task);
 }
 
-HBInputOrigin InputGlyphsSingleton::get_origin_from_joy_event(const Ref<InputEvent> &p_input_event) const {
+InputOrigin InputGlyphsSingleton::get_origin_from_joy_event(const Ref<InputEvent> &p_input_event) const {
 	Ref<InputEventJoypadButton> joy_button = p_input_event;
-	HBInputOrigin origin = HBInputOrigin::INPUT_ORIGIN_INVALID;
+	InputOrigin origin = InputOrigin::INPUT_ORIGIN_INVALID;
 	if (joy_button.is_valid()) {
 		if (joy_button->get_button_index() < JoyButton::SDL_MAX) {
-			origin = HBInputGlyphs::godot_button_to_input_origin_lut[(int)joy_button->get_button_index()];
+			origin = InputGlyphTables::godot_button_to_input_origin_lut[(int)joy_button->get_button_index()];
 		}
 	}
 	// TODO: Implement input event joy motion
@@ -241,20 +243,59 @@ HBInputOrigin InputGlyphsSingleton::get_origin_from_joy_event(const Ref<InputEve
 	return origin;
 }
 
-void InputGlyphsSingleton::set_forced_input_type(HBInputType p_force_input_type) {
-	HBInputType input_type = _get_input_type();
+void InputGlyphsSingleton::set_forced_input_type(InputType p_force_input_type) {
+	InputType input_type = _get_input_type();
 	forced_input_type = p_force_input_type;
 	if (input_type != p_force_input_type) {
-		_on_input_type_changed();
+		_on_input_glyphs_changed();
 	}
 }
 
-HBInputType InputGlyphsSingleton::get_forced_input_type() const {
+InputType InputGlyphsSingleton::get_forced_input_type() const {
 	return forced_input_type;
 }
 
 InputGlyphsSingleton *InputGlyphsSingleton::get_singleton() {
 	return singleton;
+}
+
+String InputGlyphsSingleton::input_type_to_localized_string(InputType p_type) const {
+	String ret;
+	switch (p_type) {
+		case UNKNOWN:
+			ret = RTR("Unknown Controller");
+			break;
+		case STEAM_CONTROLLER:
+			ret = RTR("Steam Controller");
+			break;
+		case XBOX_360_CONTROLLER:
+			ret = RTR("Xbox 360 Controller");
+			break;
+		case XBOX_ONE_CONTROLLER:
+			ret = RTR("Xbox One/Series X|S Controller");
+			break;
+		case GENERIC_XINPUT_CONTROLLER:
+			ret = RTR("Generic Controller");
+			break;
+		case PS3_CONTROLLER:
+			ret = RTR("PlayStation 3 Controller");
+			break;
+		case PS4_CONTROLLER:
+			ret = RTR("PlayStation 4 Controller");
+			break;
+		case PS5_CONTROLLER:
+			ret = RTR("PlayStation 5 Controller");
+			break;
+		case SWITCH_PRO_CONTROLLER:
+			ret = RTR("Nintendo Switch Controller");
+			break;
+		case STEAM_DECK_CONTROLLER:
+			ret = RTR("Steam Deck Controller");
+			break;
+		case INPUT_TYPE_MAX:
+			break; // Can't happen, but silences warning
+	}
+	return ret;
 }
 
 InputGlyphsSingleton::InputGlyphsSingleton() {
