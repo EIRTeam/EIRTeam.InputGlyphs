@@ -43,7 +43,7 @@ Ref<InputGlyphsSource> InputGlyphsSource::create() {
 	return _create_func();
 }
 
-Ref<Texture2D> InputGlyphsSourceBuiltin::get_input_glyph(const HBInputType &p_input_type, const HBInputOrigin &p_input_origin, const int &p_glyphs_style, const HBInputGlyphSize &p_size) {
+Ref<Texture2D> InputGlyphsSourceBuiltin::get_input_glyph(const HBInputType &p_input_type, const HBInputOrigin &p_input_origin, const BitField<HBInputGlyphStyle> &p_glyphs_style, const HBInputGlyphSize &p_size) {
 	int theme = p_glyphs_style & 0b11;
 	int abxy_overrides = p_glyphs_style & 0b110000;
 	abxy_overrides = abxy_overrides >> 4;

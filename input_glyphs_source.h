@@ -42,7 +42,7 @@ protected:
 	static Ref<InputGlyphsSource> (*_create_func)();
 
 public:
-	virtual Ref<Texture2D> get_input_glyph(const HBInputType &p_input_type, const HBInputOrigin &p_input_origin, const int &p_glyphs_style, const HBInputGlyphSize &p_size) = 0;
+	virtual Ref<Texture2D> get_input_glyph(const HBInputType &p_input_type, const HBInputOrigin &p_input_origin, const BitField<HBInputGlyphStyle> &p_glyphs_style, const HBInputGlyphSize &p_size) = 0;
 	static Ref<InputGlyphsSource> create();
 	virtual HBInputType identify_joy(int p_device) const = 0;
 };
@@ -51,7 +51,7 @@ class InputGlyphsSourceBuiltin : public InputGlyphsSource {
 	GDCLASS(InputGlyphsSourceBuiltin, InputGlyphsSource);
 
 private:
-	virtual Ref<Texture2D> get_input_glyph(const HBInputType &p_input_type, const HBInputOrigin &p_input_origin, const int &p_glyphs_style, const HBInputGlyphSize &p_size) override;
+	virtual Ref<Texture2D> get_input_glyph(const HBInputType &p_input_type, const HBInputOrigin &p_input_origin, const BitField<HBInputGlyphStyle> &p_glyphs_style, const HBInputGlyphSize &p_size) override;
 
 public:
 	static Ref<InputGlyphsSource> _create_current() {

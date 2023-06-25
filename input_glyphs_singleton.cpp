@@ -164,6 +164,13 @@ void InputGlyphsSingleton::_bind_methods() {
 	BIND_ENUM_CONSTANT(GLYPH_SIZE_LARGE);
 	BIND_ENUM_CONSTANT(GLYPH_SIZE_MAX);
 
+	BIND_BITFIELD_FLAG(GLYPH_STYLE_KNOCKOUT);
+	BIND_BITFIELD_FLAG(GLYPH_STYLE_LIGHT);
+	BIND_BITFIELD_FLAG(GLYPH_STYLE_DARK);
+
+	BIND_BITFIELD_FLAG(GLYPH_STYLE_NEUTRAL_COLOR_ABXY);
+	BIND_BITFIELD_FLAG(GLYPH_STYLE_SOLID_ABXY);
+
 	ClassDB::bind_method(D_METHOD("has_glyph_texture", "input_origin", "style", "size"), &InputGlyphsSingleton::has_glyph_texture, DEFVAL(HBInputGlyphSize::GLYPH_SIZE_MAX));
 	ClassDB::bind_method(D_METHOD("get_glyph_texture", "input_origin", "style", "size"), &InputGlyphsSingleton::get_glyph_texture, DEFVAL(HBInputGlyphSize::GLYPH_SIZE_MAX));
 	ClassDB::bind_method(D_METHOD("request_glyph_texture_load", "input_origin", "style", "size"), &InputGlyphsSingleton::request_glyph_texture_load, DEFVAL(HBInputGlyphSize::GLYPH_SIZE_MAX));
@@ -174,7 +181,7 @@ void InputGlyphsSingleton::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "forced_input_type"), "set_forced_input_type", "get_forced_input_type");
 }
 
-bool InputGlyphsSingleton::has_glyph_texture(const HBInputOrigin p_input_origin, const int &p_style, const HBInputGlyphSize p_size) {
+bool InputGlyphsSingleton::has_glyph_texture(const HBInputOrigin p_input_origin, BitField<HBInputGlyphStyle> p_style, const HBInputGlyphSize p_size) {
 	HBInputGlyphSize size = p_size == HBInputGlyphSize::GLYPH_SIZE_MAX ? default_glyph_size : p_size;
 	GlyphInfo info;
 	info.origin = p_input_origin;
@@ -184,7 +191,7 @@ bool InputGlyphsSingleton::has_glyph_texture(const HBInputOrigin p_input_origin,
 	return loaded_glyphs.has(info.get_uid());
 }
 
-Ref<Texture2D> InputGlyphsSingleton::get_glyph_texture(const HBInputOrigin p_input_origin, const int &p_style, const HBInputGlyphSize p_size) {
+Ref<Texture2D> InputGlyphsSingleton::get_glyph_texture(const HBInputOrigin p_input_origin, const BitField<HBInputGlyphStyle> p_style, const HBInputGlyphSize p_size) {
 	HBInputGlyphSize size = p_size == HBInputGlyphSize::GLYPH_SIZE_MAX ? default_glyph_size : p_size;
 	GlyphInfo info;
 	info.origin = p_input_origin;
@@ -198,7 +205,7 @@ Ref<Texture2D> InputGlyphsSingleton::get_glyph_texture(const HBInputOrigin p_inp
 	return loaded_glyphs[uid];
 }
 
-void InputGlyphsSingleton::request_glyph_texture_load(const HBInputOrigin p_input_origin, const int &p_style, const HBInputGlyphSize p_size) {
+void InputGlyphsSingleton::request_glyph_texture_load(const HBInputOrigin p_input_origin, const BitField<HBInputGlyphStyle> p_style, const HBInputGlyphSize p_size) {
 	HBInputGlyphSize size = p_size == HBInputGlyphSize::GLYPH_SIZE_MAX ? default_glyph_size : p_size;
 	GlyphInfo info;
 	info.origin = p_input_origin;

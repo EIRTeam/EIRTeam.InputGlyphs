@@ -171,7 +171,7 @@ enum HBInputGlyphStyle {
 	GLYPH_STYLE_SOLID_ABXY = 0x20, // ABXY Buttons will have a solid fill
 };
 
-VARIANT_ENUM_CAST(HBInputGlyphStyle);
+VARIANT_BITFIELD_CAST(HBInputGlyphStyle);
 
 enum HBInputGlyphSize {
 	GLYPH_SIZE_SMALL,
