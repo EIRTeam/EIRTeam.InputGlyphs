@@ -43,6 +43,11 @@ class InputActionGlyph : public CenterContainer {
 	StringName action_name = "ui_left";
 	InputOrigin origin = InputOrigin::INPUT_ORIGIN_A;
 
+	struct {
+		Ref<Font> font;
+		float font_size;
+	} theme_cache;
+
 	bool override_glyph_style = false;
 
 	int glyph_style_override = InputGlyphStyle::GLYPH_STYLE_KNOCKOUT;
@@ -58,6 +63,9 @@ protected:
 	bool _set(const StringName &p_name, const Variant &p_value);
 	bool _get(const StringName &p_name, Variant &r_ret) const;
 	void _get_property_list(List<PropertyInfo> *p_list) const;
+
+protected:
+	virtual void _update_theme_item_cache() override;
 
 public:
 	String get_text() const;

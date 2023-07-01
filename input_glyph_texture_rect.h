@@ -34,14 +34,15 @@
 #include "input_glyphs.h"
 #include "scene/gui/texture_rect.h"
 
-class InputGlyphTextureRect : public TextureRect {
-	GDCLASS(InputGlyphTextureRect, TextureRect);
+class InputGlyphTextureRect : public Control {
+	GDCLASS(InputGlyphTextureRect, Control);
 
 private:
 	bool override_glyph_style = false;
 	int glyph_style_override = InputGlyphStyle::GLYPH_STYLE_KNOCKOUT;
 	InputOrigin origin = InputOrigin::INPUT_ORIGIN_A;
 	StringName action_name = "ui_left";
+	Ref<Texture2D> texture;
 
 	int _get_glyph_style_with_override() const;
 	void _queue_texture_update();

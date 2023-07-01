@@ -29,6 +29,8 @@
 /**************************************************************************/
 
 #include "input_glyphs_singleton.h"
+#include "core/config/project_settings.h"
+#include "core/input/input_map.h"
 #include "scene/main/scene_tree.h"
 #include "scene/main/window.h"
 
@@ -59,6 +61,40 @@ void InputGlyphsSingleton::init() {
 	if (glyph_source.is_valid()) {
 		_on_input_glyphs_changed();
 	}
+}
+
+Ref<InputEvent> InputGlyphsSingleton::get_event_for_action(const StringName &p_action, int p_skip) {
+	if (Engine::get_singleton()->is_editor_hint()) {
+		StringName input_path = "input/" + p_action;
+		if (!ProjectSettings::get_singleton()->has_setting(input_path)) {
+			return Ref<InputEvent>();
+		}
+		Dictionary action = GLOBAL_GET(input_path);
+		Array events = action.get("events", Array());
+
+		for (int i = 0; i < events.size(); i++) {
+			Ref<InputEvent> event = events[i];
+			if (event.is_null()) {
+				continue;
+			}
+			InputOrigin origin = get_origin_from_joy_event(event);
+			if (origin > InputOrigin::INPUT_ORIGIN_INVALID) {
+				return event;
+			}
+		}
+	} else {
+		const InputMap::Action *action = InputMap::get_singleton()->get_action_map().getptr(p_action);
+		if (!action) {
+			return Ref<InputEvent>();
+		}
+		for (const Ref<InputEvent> &input_ev : action->inputs) {
+			InputOrigin origin = get_origin_from_joy_event(input_ev);
+			if (origin > InputOrigin::INPUT_ORIGIN_INVALID) {
+				return input_ev;
+			}
+		}
+	}
+	return Ref<InputEvent>();
 }
 
 void InputGlyphsSingleton::_input_event(const Ref<InputEvent> &p_input_event) {
@@ -204,6 +240,8 @@ Ref<Texture2D> InputGlyphsSingleton::get_glyph_texture(const InputOrigin p_input
 	InputGlyphs::GlyphUID uid = info.get_uid();
 	ERR_FAIL_COND_V(!loaded_glyphs.has(uid), memnew(ImageTexture));
 
+	print_line("PSTYLE", p_style);
+
 	return loaded_glyphs[uid];
 }
 
@@ -231,6 +269,9 @@ void InputGlyphsSingleton::request_glyph_texture_load(const InputOrigin p_input_
 }
 
 InputOrigin InputGlyphsSingleton::get_origin_from_joy_event(const Ref<InputEvent> &p_input_event) const {
+	if (p_input_event.is_null()) {
+		return InputOrigin::INPUT_ORIGIN_INVALID;
+	}
 	Ref<InputEventJoypadButton> joy_button = p_input_event;
 	InputOrigin origin = InputOrigin::INPUT_ORIGIN_INVALID;
 	if (joy_button.is_valid()) {
@@ -296,6 +337,23 @@ String InputGlyphsSingleton::input_type_to_localized_string(InputType p_type) co
 			break; // Can't happen, but silences warning
 	}
 	return ret;
+}
+
+List<StringName> InputGlyphsSingleton::get_game_actions() const {
+	List<StringName> actions;
+	if (Engine::get_singleton()->is_editor_hint()) {
+		List<PropertyInfo> pinfo;
+		ProjectSettings::get_singleton()->get_property_list(&pinfo);
+		for (int i = 0; i < pinfo.size(); i++) {
+			if (pinfo[i].name.begins_with("input/")) {
+				StringName name = pinfo[i].name.substr(pinfo[i].name.find("/") + 1, pinfo[i].name.length());
+				actions.push_back(name);
+			}
+		}
+	} else {
+		actions = InputMap::get_singleton()->get_actions();
+	}
+	return actions;
 }
 
 InputGlyphsSingleton::InputGlyphsSingleton() {

@@ -43,19 +43,9 @@ int InputActionGlyph::_get_glyph_style_with_override() {
 }
 
 void InputActionGlyph::_queue_label_update() {
-	if (!Engine::get_singleton()->is_editor_hint()) {
-		const InputMap::Action *action = InputMap::get_singleton()->get_action_map().getptr(action_name);
-		ERR_FAIL_COND_MSG(action == nullptr, vformat("InputActionGlyph: action %s does not exist.", action_name));
-		origin = InputOrigin::INPUT_ORIGIN_INVALID;
-		for (const Ref<InputEvent> &input_ev : action->inputs) {
-			origin = InputGlyphsSingleton::get_singleton()->get_origin_from_joy_event(input_ev);
-			if (origin > InputOrigin::INPUT_ORIGIN_INVALID) {
-				break;
-			}
-		}
-		ERR_FAIL_COND_MSG(origin == InputOrigin::INPUT_ORIGIN_INVALID, vformat("InputActionGlyph: Couldn't find an input origin for action %s. Using a placeholder instead.", action_name));
-		set_process_internal(true);
-	}
+	Ref<InputEvent> ev = InputGlyphsSingleton::get_singleton()->get_event_for_action(action_name);
+	origin = InputGlyphsSingleton::get_singleton()->get_origin_from_joy_event(ev);
+	set_process_internal(true);
 }
 
 void InputActionGlyph::_on_input_glyphs_changed() {
@@ -108,17 +98,22 @@ void InputActionGlyph::_notification(int p_what) {
 bool InputActionGlyph::_set(const StringName &p_name, const Variant &p_value) {
 	if (p_name == SNAME("style_override_theme")) {
 		int value = p_value;
+		// Make sure we clear the existing theme
 		glyph_style_override &= ~(0b11);
 		glyph_style_override |= value;
+		_queue_label_update();
 		return true;
-	} else if (p_name == SNAME("style_override_abx_overrides")) {
+	} else if (p_name == SNAME("style_override_abxy_overrides")) {
 		int value = p_value;
+		// Make sure we clear the existing ABXY override
 		glyph_style_override &= ~(0b110000);
 		glyph_style_override |= value;
+		print_line(vformat("%X", value));
+		_queue_label_update();
 		return true;
 	} else if (p_name == SNAME("action")) {
-		int idx = p_value;
-		action_name = InputMap::get_singleton()->get_actions()[idx];
+		action_name = p_value;
+		_queue_label_update();
 		return true;
 	}
 	return false;
@@ -128,17 +123,11 @@ bool InputActionGlyph::_get(const StringName &p_name, Variant &r_ret) const {
 	if (p_name == SNAME("style_override_theme")) {
 		r_ret = glyph_style_override & 0b11;
 		return true;
-	} else if (p_name == SNAME("style_override_abx_overrides")) {
+	} else if (p_name == SNAME("style_override_abxy_overrides")) {
 		r_ret = glyph_style_override & 0b110000;
 		return true;
 	} else if (p_name == SNAME("action")) {
-		List<StringName> actions = InputMap::get_singleton()->get_actions();
-		for (int i = 0; i < actions.size(); i++) {
-			if (action_name == actions[i]) {
-				r_ret = i;
-				break;
-			}
-		}
+		r_ret = action_name;
 		return true;
 	}
 	return false;
@@ -147,15 +136,23 @@ bool InputActionGlyph::_get(const StringName &p_name, Variant &r_ret) const {
 void InputActionGlyph::_get_property_list(List<PropertyInfo> *p_list) const {
 	if (override_glyph_style) {
 		p_list->push_back(PropertyInfo(Variant::INT, "style_override_theme", PROPERTY_HINT_ENUM, "Kockout,Light,Dark", PROPERTY_USAGE_EDITOR));
-		p_list->push_back(PropertyInfo(Variant::INT, "style_override_abx_overrides", PROPERTY_HINT_FLAGS, "Neutral Color ABXY:16, Solid ABXY:32", PROPERTY_USAGE_EDITOR));
+		p_list->push_back(PropertyInfo(Variant::INT, "style_override_abxy_overrides", PROPERTY_HINT_FLAGS, "Neutral Color ABXY:16, Solid ABXY:32", PROPERTY_USAGE_EDITOR));
 	}
 
-	List<StringName> action_list = InputMap::get_singleton()->get_actions();
+	List<StringName> action_list = InputGlyphsSingleton::get_singleton()->get_game_actions();
+
 	String enum_values;
 	for (int i = 0; i < action_list.size(); i++) {
 		enum_values += String(action_list[i]) + ",";
 	}
-	p_list->push_back(PropertyInfo(Variant::INT, "action", PROPERTY_HINT_ENUM, enum_values, PROPERTY_USAGE_EDITOR));
+
+	p_list->push_back(PropertyInfo(Variant::STRING, "action", PROPERTY_HINT_ENUM, enum_values, PROPERTY_USAGE_EDITOR));
+}
+
+void InputActionGlyph::_update_theme_item_cache() {
+	CenterContainer::_update_theme_item_cache();
+	theme_cache.font = get_theme_font_size(SNAME("font"));
+	theme_cache.font_size = get_theme_font_size(SNAME("font_size"));
 }
 
 String InputActionGlyph::get_text() const {
@@ -177,6 +174,7 @@ int InputActionGlyph::get_glyph_style_override() const {
 
 void InputActionGlyph::set_glyph_style_override(const int &p_glyph_style_override) {
 	glyph_style_override = p_glyph_style_override;
+	_queue_label_update();
 }
 
 StringName InputActionGlyph::get_action_name() const {
@@ -185,6 +183,7 @@ StringName InputActionGlyph::get_action_name() const {
 
 void InputActionGlyph::set_action_name(const StringName &p_action_name) {
 	action_name = p_action_name;
+	_queue_label_update();
 }
 
 bool InputActionGlyph::get_override_glyph_style() const {

@@ -62,6 +62,12 @@ Ref<Texture2D> InputGlyphsSourceBuiltin::get_input_glyph(const InputType &p_inpu
 		} break;
 	}
 
+	if (p_input_origin == INPUT_ORIGIN_INVALID) {
+		Ref<PlaceholderTexture2D> placeholder = memnew(PlaceholderTexture2D);
+		placeholder->set_size(size);
+		return placeholder;
+	}
+
 	if (theme > 2) {
 		Ref<PlaceholderTexture2D> placeholder = memnew(PlaceholderTexture2D);
 		placeholder->set_size(size);
