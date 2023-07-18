@@ -280,7 +280,35 @@ InputOrigin InputGlyphsSingleton::get_origin_from_joy_event(const Ref<InputEvent
 		}
 	}
 	// TODO: Implement input event joy motion
-	//Ref<InputEventJoypadMotion> joy_motion = p_input_event;
+	Ref<InputEventJoypadMotion> joy_motion = p_input_event;
+	if (joy_motion.is_valid()) {
+		int sign = SIGN(joy_motion->get_axis_value());
+		print_line(joy_motion, sign);
+		switch (joy_motion->get_axis()) {
+			case JoyAxis::LEFT_X: {
+				origin = sign > 0 ? INPUT_ORIGIN_LEFTSTICK_DPADEAST : INPUT_ORIGIN_LEFTSTICK_DPADWEST;
+			} break;
+			case JoyAxis::LEFT_Y: {
+				origin = sign > 0 ? INPUT_ORIGIN_LEFTSTICK_DPADSOUTH : INPUT_ORIGIN_LEFTSTICK_DPADNORTH;
+			} break;
+			case JoyAxis::RIGHT_X: {
+				origin = sign > 0 ? INPUT_ORIGIN_RIGHTSTICK_DPADEAST : INPUT_ORIGIN_RIGHTSTICK_DPADWEST;
+			} break;
+			case JoyAxis::RIGHT_Y: {
+				origin = sign > 0 ? INPUT_ORIGIN_RIGHTSTICK_DPADSOUTH : INPUT_ORIGIN_RIGHTSTICK_DPADNORTH;
+			} break;
+			case JoyAxis::TRIGGER_LEFT: {
+				origin = INPUT_ORIGIN_LEFTTRIGGER_PULL;
+			} break;
+			case JoyAxis::TRIGGER_RIGHT: {
+				origin = INPUT_ORIGIN_RIGHTTRIGGER_PULL;
+			} break;
+			case JoyAxis::INVALID:
+			case JoyAxis::SDL_MAX:
+			case JoyAxis::MAX: {
+			} break;
+		}
+	}
 	return origin;
 }
 
