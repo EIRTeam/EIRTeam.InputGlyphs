@@ -32,6 +32,8 @@
 #include "controller_list.h"
 #include "glyphs.gen.h"
 #include "input_glyph_svg_decode.h"
+#include "scene/resources/image_texture.h"
+#include "scene/resources/placeholder_textures.h"
 #include <iterator>
 
 Ref<InputGlyphsSource> (*InputGlyphsSource::_create_func)() = nullptr;

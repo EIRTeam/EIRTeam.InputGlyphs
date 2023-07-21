@@ -33,6 +33,7 @@
 #include "core/input/input_map.h"
 #include "scene/main/scene_tree.h"
 #include "scene/main/window.h"
+#include "scene/resources/image_texture.h"
 
 InputGlyphsSingleton *InputGlyphsSingleton::singleton = nullptr;
 
