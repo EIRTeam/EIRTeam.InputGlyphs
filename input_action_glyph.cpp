@@ -108,7 +108,6 @@ bool InputActionGlyph::_set(const StringName &p_name, const Variant &p_value) {
 		// Make sure we clear the existing ABXY override
 		glyph_style_override &= ~(0b110000);
 		glyph_style_override |= value;
-		print_line(vformat("%X", value));
 		_queue_label_update();
 		return true;
 	} else if (p_name == SNAME("action")) {

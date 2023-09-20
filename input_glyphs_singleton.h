@@ -41,7 +41,7 @@
 
 namespace InputGlyphs {
 typedef uint64_t GlyphUID;
-static GlyphUID calculate_guid(const InputOrigin &p_input_origin, const int &p_style, const InputGlyphSize &p_glyph_size) {
+static GlyphUID calculate_guid(const InputGlyphsConstants::InputOrigin &p_input_origin, const int &p_style, const InputGlyphSize &p_glyph_size) {
 	GlyphUID uid;
 	uid = p_input_origin << 6;
 	uid |= p_style;
@@ -54,7 +54,7 @@ class InputGlyphsSingleton : public Object {
 	GDCLASS(InputGlyphsSingleton, Object);
 
 	struct GlyphInfo {
-		InputOrigin origin;
+		InputGlyphsConstants::InputOrigin origin;
 		int style;
 		InputGlyphSize size;
 		InputGlyphs::GlyphUID get_uid() {
@@ -69,7 +69,7 @@ class InputGlyphsSingleton : public Object {
 		Mutex task_mutex;
 		GlyphInfo glyph_info;
 		WorkerThreadPool::TaskID task_id;
-		InputType input_type;
+		InputGlyphsConstants::InputType input_type;
 		Ref<Texture2D> texture;
 	};
 
@@ -81,14 +81,14 @@ class InputGlyphsSingleton : public Object {
 
 	static InputGlyphsSingleton *singleton;
 	void _input_event(const Ref<InputEvent> &p_input_event);
-	InputType _get_input_type() const;
+	InputGlyphsConstants::InputType _get_input_type() const;
 
 public:
 	Ref<InputGlyphsSource> glyph_source;
 
 private:
-	InputType current_input_type = InputType::UNKNOWN;
-	InputType forced_input_type = InputType::UNKNOWN;
+	InputGlyphsConstants::InputType current_input_type = InputGlyphsConstants::UNKNOWN;
+	InputGlyphsConstants::InputType forced_input_type = InputGlyphsConstants::UNKNOWN;
 	InputGlyphStyle default_glyph_style = InputGlyphStyle::GLYPH_STYLE_KNOCKOUT;
 	InputGlyphSize default_glyph_size = InputGlyphSize::GLYPH_SIZE_SMALL;
 
@@ -102,14 +102,14 @@ protected:
 public:
 	void init();
 	Ref<InputEvent> get_event_for_action(const StringName &p_action, int p_skip = 0);
-	bool has_glyph_texture(const InputOrigin p_input_origin, BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size = InputGlyphSize::GLYPH_SIZE_MAX);
-	Ref<Texture2D> get_glyph_texture(const InputOrigin p_input_origin, BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size = InputGlyphSize::GLYPH_SIZE_MAX);
-	void request_glyph_texture_load(const InputOrigin p_input_origin, BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size = InputGlyphSize::GLYPH_SIZE_MAX);
-	InputOrigin get_origin_from_joy_event(const Ref<InputEvent> &p_input_event) const;
-	void set_forced_input_type(InputType p_force_input_type);
-	InputType get_forced_input_type() const;
+	bool has_glyph_texture(const InputGlyphsConstants::InputOrigin p_input_origin, BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size = InputGlyphSize::GLYPH_SIZE_MAX);
+	Ref<Texture2D> get_glyph_texture(const InputGlyphsConstants::InputOrigin p_input_origin, BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size = InputGlyphSize::GLYPH_SIZE_MAX);
+	void request_glyph_texture_load(const InputGlyphsConstants::InputOrigin p_input_origin, BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size = InputGlyphSize::GLYPH_SIZE_MAX);
+	InputGlyphsConstants::InputOrigin get_origin_from_joy_event(const Ref<InputEvent> &p_input_event) const;
+	void set_forced_input_type(InputGlyphsConstants::InputType p_force_input_type);
+	InputGlyphsConstants::InputType get_forced_input_type() const;
 	static InputGlyphsSingleton *get_singleton();
-	String input_type_to_localized_string(InputType p_origin) const;
+	String input_type_to_localized_string(InputGlyphsConstants::InputType p_origin) const;
 	List<StringName> get_game_actions() const;
 	InputGlyphsSingleton();
 };

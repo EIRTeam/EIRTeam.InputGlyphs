@@ -32,6 +32,7 @@
 #define INPUT_GLYPH_TEXTURE_RECT_H
 
 #include "input_glyphs.h"
+#include "input_glyphs_constants.h"
 #include "scene/gui/texture_rect.h"
 
 class InputGlyphTextureRect : public Control {
@@ -40,7 +41,7 @@ class InputGlyphTextureRect : public Control {
 private:
 	bool override_glyph_style = false;
 	int glyph_style_override = InputGlyphStyle::GLYPH_STYLE_KNOCKOUT;
-	InputOrigin origin = InputOrigin::INPUT_ORIGIN_A;
+	InputGlyphsConstants::InputOrigin origin = InputGlyphsConstants::INPUT_ORIGIN_A;
 	StringName action_name = "ui_left";
 	Ref<Texture2D> texture;
 

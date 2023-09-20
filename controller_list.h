@@ -36,27 +36,27 @@
 typedef struct
 {
 	unsigned int device_id;
-	InputType controller_type;
+	InputGlyphsConstants::InputType controller_type;
 	const char *name;
 } ControllerDescription_t;
 
-#define k_eControllerType_PS3Controller InputType::PS3_CONTROLLER
-#define k_eControllerType_PS4Controller InputType::PS4_CONTROLLER
-#define k_eControllerType_PS5Controller InputType::PS5_CONTROLLER
-#define k_eControllerType_XInputPS4Controller InputType::PS4_CONTROLLER
-#define k_eControllerType_UnknownNonSteamController InputType::UNKNOWN
-#define k_eControllerType_XBox360Controller InputType::XBOX_360_CONTROLLER
-#define k_eControllerType_XBoxOneController InputType::XBOX_ONE_CONTROLLER
-#define k_eControllerType_AppleController InputType::GENERIC_XINPUT_CONTROLLER
-#define k_eControllerType_SwitchJoyConLeft InputType::SWITCH_PRO_CONTROLLER
-#define k_eControllerType_SwitchJoyConRight InputType::SWITCH_PRO_CONTROLLER
-#define k_eControllerType_SwitchJoyConPair InputType::SWITCH_PRO_CONTROLLER
-#define k_eControllerType_SwitchProController InputType::SWITCH_PRO_CONTROLLER
-#define k_eControllerType_SwitchInputOnlyController InputType::SWITCH_PRO_CONTROLLER
-#define k_eControllerType_XInputSwitchController InputType::SWITCH_PRO_CONTROLLER
-#define k_eControllerType_MobileTouch InputType::STEAM_CONTROLLER
-#define k_eControllerType_SteamController InputType::STEAM_CONTROLLER
-#define k_eControllerType_SteamControllerV2 InputType::STEAM_CONTROLLER
+#define k_eControllerType_PS3Controller InputGlyphsConstants::PS3_CONTROLLER
+#define k_eControllerType_PS4Controller InputGlyphsConstants::PS4_CONTROLLER
+#define k_eControllerType_PS5Controller InputGlyphsConstants::PS5_CONTROLLER
+#define k_eControllerType_XInputPS4Controller InputGlyphsConstants::PS4_CONTROLLER
+#define k_eControllerType_UnknownNonSteamController InputGlyphsConstants::UNKNOWN
+#define k_eControllerType_XBox360Controller InputGlyphsConstants::XBOX_360_CONTROLLER
+#define k_eControllerType_XBoxOneController InputGlyphsConstants::XBOX_ONE_CONTROLLER
+#define k_eControllerType_AppleController InputGlyphsConstants::GENERIC_XINPUT_CONTROLLER
+#define k_eControllerType_SwitchJoyConLeft InputGlyphsConstants::SWITCH_PRO_CONTROLLER
+#define k_eControllerType_SwitchJoyConRight InputGlyphsConstants::SWITCH_PRO_CONTROLLER
+#define k_eControllerType_SwitchJoyConPair InputGlyphsConstants::SWITCH_PRO_CONTROLLER
+#define k_eControllerType_SwitchProController InputGlyphsConstants::SWITCH_PRO_CONTROLLER
+#define k_eControllerType_SwitchInputOnlyController InputGlyphsConstants::SWITCH_PRO_CONTROLLER
+#define k_eControllerType_XInputSwitchController InputGlyphsConstants::SWITCH_PRO_CONTROLLER
+#define k_eControllerType_MobileTouch InputGlyphsConstants::STEAM_CONTROLLER
+#define k_eControllerType_SteamController InputGlyphsConstants::STEAM_CONTROLLER
+#define k_eControllerType_SteamControllerV2 InputGlyphsConstants::STEAM_CONTROLLER
 
 #include "thirdparty/controller_list_sdl.h"
 

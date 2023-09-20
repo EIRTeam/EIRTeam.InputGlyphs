@@ -78,8 +78,8 @@ Ref<InputEvent> InputGlyphsSingleton::get_event_for_action(const StringName &p_a
 			if (event.is_null()) {
 				continue;
 			}
-			InputOrigin origin = get_origin_from_joy_event(event);
-			if (origin > InputOrigin::INPUT_ORIGIN_INVALID) {
+			InputGlyphsConstants::InputOrigin origin = get_origin_from_joy_event(event);
+			if (origin > InputGlyphsConstants::InputOrigin::INPUT_ORIGIN_INVALID) {
 				return event;
 			}
 		}
@@ -89,8 +89,8 @@ Ref<InputEvent> InputGlyphsSingleton::get_event_for_action(const StringName &p_a
 			return Ref<InputEvent>();
 		}
 		for (const Ref<InputEvent> &input_ev : action->inputs) {
-			InputOrigin origin = get_origin_from_joy_event(input_ev);
-			if (origin > InputOrigin::INPUT_ORIGIN_INVALID) {
+			InputGlyphsConstants::InputOrigin origin = get_origin_from_joy_event(input_ev);
+			if (origin > InputGlyphsConstants::InputOrigin::INPUT_ORIGIN_INVALID) {
 				return input_ev;
 			}
 		}
@@ -100,8 +100,8 @@ Ref<InputEvent> InputGlyphsSingleton::get_event_for_action(const StringName &p_a
 
 void InputGlyphsSingleton::_input_event(const Ref<InputEvent> &p_input_event) {
 	Ref<InputEventJoypadButton> joypad_button = p_input_event;
-	if (joypad_button.is_valid() && forced_input_type != InputType::UNKNOWN) {
-		InputType new_input_type = glyph_source->identify_joy(joypad_button->get_device());
+	if (joypad_button.is_valid() && forced_input_type != InputGlyphsConstants::UNKNOWN) {
+		InputGlyphsConstants::InputType new_input_type = glyph_source->identify_joy(joypad_button->get_device());
 		if (current_input_type != new_input_type) {
 			current_input_type = new_input_type;
 			_on_input_glyphs_changed();
@@ -109,8 +109,8 @@ void InputGlyphsSingleton::_input_event(const Ref<InputEvent> &p_input_event) {
 	}
 }
 
-InputType InputGlyphsSingleton::_get_input_type() const {
-	if (forced_input_type != InputType::UNKNOWN) {
+InputGlyphsConstants::InputType InputGlyphsSingleton::_get_input_type() const {
+	if (forced_input_type != InputGlyphsConstants::UNKNOWN) {
 		return forced_input_type;
 	}
 	return current_input_type;
@@ -146,55 +146,6 @@ void InputGlyphsSingleton::_on_input_glyphs_changed() {
 
 void InputGlyphsSingleton::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("input_glyphs_changed"));
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_INVALID);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_A);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_B);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_X);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_Y);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_VIEW); // Select/Back
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_MENU); // Start
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_LEFTBUMPER);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_RIGHTBUMPER);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_LEFTTRIGGER_PULL);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_LEFTTRIGGER_CLICK);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_RIGHTTRIGGER_PULL);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_RIGHTTRIGGER_CLICK);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_LEFTSTICK_MOVE);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_LEFTSTICK_CLICK);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_LEFTSTICK_DPADNORTH);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_LEFTSTICK_DPADSOUTH);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_LEFTSTICK_DPADWEST);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_LEFTSTICK_DPADEAST);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_RIGHTSTICK_MOVE);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_RIGHTSTICK_CLICK);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_RIGHTSTICK_DPADNORTH);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_RIGHTSTICK_DPADSOUTH);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_RIGHTSTICK_DPADWEST);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_RIGHTSTICK_DPADEAST);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_DPAD_NORTH);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_DPAD_SOUTH);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_DPAD_WEST);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_DPAD_EAST);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_DPAD_MOVE);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_MISC1); // Xbox Series X share button, PS5 microphone button, Nintendo Switch Pro capture button, Amazon Luna microphone button
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_PADDLE1); // Xbox Elite paddle P1 (upper left, facing the back)
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_PADDLE2); // Xbox Elite paddle P3 (upper right, facing the back)
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_PADDLE3); // Xbox Elite paddle P2 (lower left, facing the back)
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_PADDLE4); // Xbox Elite paddle P4 (lower right, facing the back)
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_TRACKPAD_CLICK);
-	BIND_ENUM_CONSTANT(INPUT_ORIGIN_COUNT);
-
-	BIND_ENUM_CONSTANT(UNKNOWN);
-	BIND_ENUM_CONSTANT(STEAM_CONTROLLER);
-	BIND_ENUM_CONSTANT(XBOX_360_CONTROLLER);
-	BIND_ENUM_CONSTANT(XBOX_ONE_CONTROLLER);
-	BIND_ENUM_CONSTANT(GENERIC_XINPUT_CONTROLLER);
-	BIND_ENUM_CONSTANT(PS3_CONTROLLER);
-	BIND_ENUM_CONSTANT(PS4_CONTROLLER);
-	BIND_ENUM_CONSTANT(PS5_CONTROLLER);
-	BIND_ENUM_CONSTANT(SWITCH_PRO_CONTROLLER);
-	BIND_ENUM_CONSTANT(STEAM_DECK_CONTROLLER);
-	BIND_ENUM_CONSTANT(INPUT_TYPE_MAX);
 
 	BIND_ENUM_CONSTANT(GLYPH_SIZE_SMALL);
 	BIND_ENUM_CONSTANT(GLYPH_SIZE_MEDIUM);
@@ -220,7 +171,7 @@ void InputGlyphsSingleton::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("input_type_to_localized_string", "input_type"), &InputGlyphsSingleton::input_type_to_localized_string);
 }
 
-bool InputGlyphsSingleton::has_glyph_texture(const InputOrigin p_input_origin, BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
+bool InputGlyphsSingleton::has_glyph_texture(const InputGlyphsConstants::InputOrigin p_input_origin, BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
 	InputGlyphSize size = p_size == InputGlyphSize::GLYPH_SIZE_MAX ? default_glyph_size : p_size;
 	GlyphInfo info;
 	info.origin = p_input_origin;
@@ -230,7 +181,7 @@ bool InputGlyphsSingleton::has_glyph_texture(const InputOrigin p_input_origin, B
 	return loaded_glyphs.has(info.get_uid());
 }
 
-Ref<Texture2D> InputGlyphsSingleton::get_glyph_texture(const InputOrigin p_input_origin, const BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
+Ref<Texture2D> InputGlyphsSingleton::get_glyph_texture(const InputGlyphsConstants::InputOrigin p_input_origin, const BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
 	InputGlyphSize size = p_size == InputGlyphSize::GLYPH_SIZE_MAX ? default_glyph_size : p_size;
 	GlyphInfo info;
 	info.origin = p_input_origin;
@@ -246,7 +197,7 @@ Ref<Texture2D> InputGlyphsSingleton::get_glyph_texture(const InputOrigin p_input
 	return loaded_glyphs[uid];
 }
 
-void InputGlyphsSingleton::request_glyph_texture_load(const InputOrigin p_input_origin, const BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
+void InputGlyphsSingleton::request_glyph_texture_load(const InputGlyphsConstants::InputOrigin p_input_origin, const BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
 	InputGlyphSize size = p_size == InputGlyphSize::GLYPH_SIZE_MAX ? default_glyph_size : p_size;
 	GlyphInfo info;
 	info.origin = p_input_origin;
@@ -269,15 +220,15 @@ void InputGlyphsSingleton::request_glyph_texture_load(const InputOrigin p_input_
 	current_tasks.insert(load_task->glyph_info.get_uid(), load_task);
 }
 
-InputOrigin InputGlyphsSingleton::get_origin_from_joy_event(const Ref<InputEvent> &p_input_event) const {
+InputGlyphsConstants::InputOrigin InputGlyphsSingleton::get_origin_from_joy_event(const Ref<InputEvent> &p_input_event) const {
 	if (p_input_event.is_null()) {
-		return InputOrigin::INPUT_ORIGIN_INVALID;
+		return InputGlyphsConstants::INPUT_ORIGIN_INVALID;
 	}
 	Ref<InputEventJoypadButton> joy_button = p_input_event;
-	InputOrigin origin = InputOrigin::INPUT_ORIGIN_INVALID;
+	InputGlyphsConstants::InputOrigin origin = InputGlyphsConstants::INPUT_ORIGIN_INVALID;
 	if (joy_button.is_valid()) {
 		if (joy_button->get_button_index() < JoyButton::SDL_MAX) {
-			origin = InputGlyphTables::godot_button_to_input_origin_lut[(int)joy_button->get_button_index()];
+			origin = InputGlyphsConstants::godot_button_to_input_origin_lut[(int)joy_button->get_button_index()];
 		}
 	}
 	// TODO: Implement input event joy motion
@@ -287,22 +238,22 @@ InputOrigin InputGlyphsSingleton::get_origin_from_joy_event(const Ref<InputEvent
 		print_line(joy_motion, sign);
 		switch (joy_motion->get_axis()) {
 			case JoyAxis::LEFT_X: {
-				origin = sign > 0 ? INPUT_ORIGIN_LEFTSTICK_DPADEAST : INPUT_ORIGIN_LEFTSTICK_DPADWEST;
+				origin = sign > 0 ? InputGlyphsConstants::INPUT_ORIGIN_LEFTSTICK_DPADEAST : InputGlyphsConstants::INPUT_ORIGIN_LEFTSTICK_DPADWEST;
 			} break;
 			case JoyAxis::LEFT_Y: {
-				origin = sign > 0 ? INPUT_ORIGIN_LEFTSTICK_DPADSOUTH : INPUT_ORIGIN_LEFTSTICK_DPADNORTH;
+				origin = sign > 0 ? InputGlyphsConstants::INPUT_ORIGIN_LEFTSTICK_DPADSOUTH : InputGlyphsConstants::INPUT_ORIGIN_LEFTSTICK_DPADNORTH;
 			} break;
 			case JoyAxis::RIGHT_X: {
-				origin = sign > 0 ? INPUT_ORIGIN_RIGHTSTICK_DPADEAST : INPUT_ORIGIN_RIGHTSTICK_DPADWEST;
+				origin = sign > 0 ? InputGlyphsConstants::INPUT_ORIGIN_RIGHTSTICK_DPADEAST : InputGlyphsConstants::INPUT_ORIGIN_RIGHTSTICK_DPADWEST;
 			} break;
 			case JoyAxis::RIGHT_Y: {
-				origin = sign > 0 ? INPUT_ORIGIN_RIGHTSTICK_DPADSOUTH : INPUT_ORIGIN_RIGHTSTICK_DPADNORTH;
+				origin = sign > 0 ? InputGlyphsConstants::INPUT_ORIGIN_RIGHTSTICK_DPADSOUTH : InputGlyphsConstants::INPUT_ORIGIN_RIGHTSTICK_DPADNORTH;
 			} break;
 			case JoyAxis::TRIGGER_LEFT: {
-				origin = INPUT_ORIGIN_LEFTTRIGGER_PULL;
+				origin = InputGlyphsConstants::INPUT_ORIGIN_LEFTTRIGGER_PULL;
 			} break;
 			case JoyAxis::TRIGGER_RIGHT: {
-				origin = INPUT_ORIGIN_RIGHTTRIGGER_PULL;
+				origin = InputGlyphsConstants::INPUT_ORIGIN_RIGHTTRIGGER_PULL;
 			} break;
 			case JoyAxis::INVALID:
 			case JoyAxis::SDL_MAX:
@@ -313,15 +264,15 @@ InputOrigin InputGlyphsSingleton::get_origin_from_joy_event(const Ref<InputEvent
 	return origin;
 }
 
-void InputGlyphsSingleton::set_forced_input_type(InputType p_force_input_type) {
-	InputType input_type = _get_input_type();
+void InputGlyphsSingleton::set_forced_input_type(InputGlyphsConstants::InputType p_force_input_type) {
+	InputGlyphsConstants::InputType input_type = _get_input_type();
 	forced_input_type = p_force_input_type;
 	if (input_type != p_force_input_type) {
 		_on_input_glyphs_changed();
 	}
 }
 
-InputType InputGlyphsSingleton::get_forced_input_type() const {
+InputGlyphsConstants::InputType InputGlyphsSingleton::get_forced_input_type() const {
 	return forced_input_type;
 }
 
@@ -329,40 +280,40 @@ InputGlyphsSingleton *InputGlyphsSingleton::get_singleton() {
 	return singleton;
 }
 
-String InputGlyphsSingleton::input_type_to_localized_string(InputType p_type) const {
+String InputGlyphsSingleton::input_type_to_localized_string(InputGlyphsConstants::InputType p_type) const {
 	String ret;
 	switch (p_type) {
-		case UNKNOWN:
+		case InputGlyphsConstants::UNKNOWN:
 			ret = RTR("Unknown Controller");
 			break;
-		case STEAM_CONTROLLER:
+		case InputGlyphsConstants::STEAM_CONTROLLER:
 			ret = RTR("Steam Controller");
 			break;
-		case XBOX_360_CONTROLLER:
+		case InputGlyphsConstants::XBOX_360_CONTROLLER:
 			ret = RTR("Xbox 360 Controller");
 			break;
-		case XBOX_ONE_CONTROLLER:
+		case InputGlyphsConstants::XBOX_ONE_CONTROLLER:
 			ret = RTR("Xbox One/Series X|S Controller");
 			break;
-		case GENERIC_XINPUT_CONTROLLER:
+		case InputGlyphsConstants::GENERIC_XINPUT_CONTROLLER:
 			ret = RTR("Generic Controller");
 			break;
-		case PS3_CONTROLLER:
+		case InputGlyphsConstants::PS3_CONTROLLER:
 			ret = RTR("PlayStation 3 Controller");
 			break;
-		case PS4_CONTROLLER:
+		case InputGlyphsConstants::PS4_CONTROLLER:
 			ret = RTR("PlayStation 4 Controller");
 			break;
-		case PS5_CONTROLLER:
+		case InputGlyphsConstants::PS5_CONTROLLER:
 			ret = RTR("PlayStation 5 Controller");
 			break;
-		case SWITCH_PRO_CONTROLLER:
+		case InputGlyphsConstants::SWITCH_PRO_CONTROLLER:
 			ret = RTR("Nintendo Switch Controller");
 			break;
-		case STEAM_DECK_CONTROLLER:
+		case InputGlyphsConstants::STEAM_DECK_CONTROLLER:
 			ret = RTR("Steam Deck Controller");
 			break;
-		case INPUT_TYPE_MAX:
+		case InputGlyphsConstants::INPUT_TYPE_MAX:
 			break; // Can't happen, but silences warning
 	}
 	return ret;

@@ -41,7 +41,7 @@ class InputActionGlyph : public CenterContainer {
 	Ref<Texture2D> glyph_texture;
 	String text = "";
 	StringName action_name = "ui_left";
-	InputOrigin origin = InputOrigin::INPUT_ORIGIN_A;
+	InputGlyphsConstants::InputOrigin origin = InputGlyphsConstants::INPUT_ORIGIN_A;
 
 	struct {
 		Ref<Font> font;

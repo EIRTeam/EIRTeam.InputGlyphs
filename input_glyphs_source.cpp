@@ -45,7 +45,7 @@ Ref<InputGlyphsSource> InputGlyphsSource::create() {
 	return _create_func();
 }
 
-Ref<Texture2D> InputGlyphsSourceBuiltin::get_input_glyph(const InputType &p_input_type, const InputOrigin &p_input_origin, const BitField<InputGlyphStyle> &p_glyphs_style, const InputGlyphSize &p_size) {
+Ref<Texture2D> InputGlyphsSourceBuiltin::get_input_glyph(const InputGlyphsConstants::InputType &p_input_type, const InputGlyphsConstants::InputOrigin &p_input_origin, const BitField<InputGlyphStyle> &p_glyphs_style, const InputGlyphSize &p_size) {
 	int theme = p_glyphs_style & 0b11;
 	int abxy_overrides = p_glyphs_style & 0b110000;
 	abxy_overrides = abxy_overrides >> 4;
@@ -64,7 +64,7 @@ Ref<Texture2D> InputGlyphsSourceBuiltin::get_input_glyph(const InputType &p_inpu
 		} break;
 	}
 
-	if (p_input_origin == INPUT_ORIGIN_INVALID) {
+	if (p_input_origin == InputGlyphsConstants::INPUT_ORIGIN_INVALID) {
 		Ref<PlaceholderTexture2D> placeholder = memnew(PlaceholderTexture2D);
 		placeholder->set_size(size);
 		return placeholder;
@@ -78,7 +78,7 @@ Ref<Texture2D> InputGlyphsSourceBuiltin::get_input_glyph(const InputType &p_inpu
 
 	int svg_index = -1;
 
-	if (p_input_origin <= InputOrigin::INPUT_ORIGIN_Y && abxy_overrides != 0) {
+	if (p_input_origin <= InputGlyphsConstants::InputOrigin::INPUT_ORIGIN_Y && abxy_overrides != 0) {
 		svg_index = __glyph_icons_abxy_override_map[p_input_type][theme][((abxy_overrides - 1) * 4) + p_input_origin];
 	} else {
 		svg_index = __glyph_icons_map[p_input_type][theme][p_input_origin];
@@ -148,7 +148,7 @@ void controller_guid_string_decode(const String &p_guid_str, uint16_t *vendor, u
 	*version = guid_16[6];
 }
 
-InputType InputGlyphsSourceBuiltin::identify_joy(int p_controller_idx) const {
+InputGlyphsConstants::InputType InputGlyphsSourceBuiltin::identify_joy(int p_controller_idx) const {
 	String guid_str = Input::get_singleton()->get_joy_guid(p_controller_idx);
 	uint16_t vendor, product, version;
 	controller_guid_string_decode(guid_str, &vendor, &product, &version);
@@ -160,5 +160,5 @@ InputType InputGlyphsSourceBuiltin::identify_joy(int p_controller_idx) const {
 		}
 	}
 
-	return InputType::UNKNOWN;
+	return InputGlyphsConstants::UNKNOWN;
 }
