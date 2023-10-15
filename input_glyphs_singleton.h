@@ -111,6 +111,7 @@ public:
 	static InputGlyphsSingleton *get_singleton();
 	String input_type_to_localized_string(InputGlyphsConstants::InputType p_origin) const;
 	List<StringName> get_game_actions() const;
+	String get_event_display_string(const Ref<InputEvent> p_event) const;
 	InputGlyphsSingleton();
 };
 

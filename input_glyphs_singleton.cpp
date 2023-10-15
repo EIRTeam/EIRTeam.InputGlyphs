@@ -65,6 +65,7 @@ void InputGlyphsSingleton::init() {
 }
 
 Ref<InputEvent> InputGlyphsSingleton::get_event_for_action(const StringName &p_action, int p_skip) {
+	bool is_keyboard = current_input_type == InputGlyphsConstants::KEYBOARD;
 	if (Engine::get_singleton()->is_editor_hint()) {
 		StringName input_path = "input/" + p_action;
 		if (!ProjectSettings::get_singleton()->has_setting(input_path)) {
@@ -78,6 +79,14 @@ Ref<InputEvent> InputGlyphsSingleton::get_event_for_action(const StringName &p_a
 			if (event.is_null()) {
 				continue;
 			}
+
+			if (is_keyboard) {
+				Ref<InputEventKey> key_ev = events[i];
+				if (key_ev.is_valid()) {
+					return key_ev;
+				}
+			}
+
 			InputGlyphsConstants::InputOrigin origin = get_origin_from_joy_event(event);
 			if (origin > InputGlyphsConstants::InputOrigin::INPUT_ORIGIN_INVALID) {
 				return event;
@@ -90,6 +99,15 @@ Ref<InputEvent> InputGlyphsSingleton::get_event_for_action(const StringName &p_a
 		}
 		for (const Ref<InputEvent> &input_ev : action->inputs) {
 			InputGlyphsConstants::InputOrigin origin = get_origin_from_joy_event(input_ev);
+
+			if (is_keyboard) {
+				Ref<InputEventKey> key_ev = input_ev;
+				if (key_ev.is_valid()) {
+					return key_ev;
+				}
+				continue;
+			}
+
 			if (origin > InputGlyphsConstants::InputOrigin::INPUT_ORIGIN_INVALID) {
 				return input_ev;
 			}
@@ -99,9 +117,18 @@ Ref<InputEvent> InputGlyphsSingleton::get_event_for_action(const StringName &p_a
 }
 
 void InputGlyphsSingleton::_input_event(const Ref<InputEvent> &p_input_event) {
+	print_line("EV!", p_input_event, forced_input_type);
 	Ref<InputEventJoypadButton> joypad_button = p_input_event;
-	if (joypad_button.is_valid() && forced_input_type != InputGlyphsConstants::UNKNOWN) {
+	if (joypad_button.is_valid() && forced_input_type == InputGlyphsConstants::UNKNOWN) {
 		InputGlyphsConstants::InputType new_input_type = glyph_source->identify_joy(joypad_button->get_device());
+		if (current_input_type != new_input_type) {
+			current_input_type = new_input_type;
+			_on_input_glyphs_changed();
+		}
+	}
+	Ref<InputEventKey> key_button = p_input_event;
+	if (key_button.is_valid() && forced_input_type == InputGlyphsConstants::UNKNOWN) {
+		InputGlyphsConstants::InputType new_input_type = InputGlyphsConstants::KEYBOARD;
 		if (current_input_type != new_input_type) {
 			current_input_type = new_input_type;
 			_on_input_glyphs_changed();
@@ -192,8 +219,6 @@ Ref<Texture2D> InputGlyphsSingleton::get_glyph_texture(const InputGlyphsConstant
 	InputGlyphs::GlyphUID uid = info.get_uid();
 	ERR_FAIL_COND_V(!loaded_glyphs.has(uid), memnew(ImageTexture));
 
-	print_line("PSTYLE", p_style);
-
 	return loaded_glyphs[uid];
 }
 
@@ -235,7 +260,6 @@ InputGlyphsConstants::InputOrigin InputGlyphsSingleton::get_origin_from_joy_even
 	Ref<InputEventJoypadMotion> joy_motion = p_input_event;
 	if (joy_motion.is_valid()) {
 		int sign = SIGN(joy_motion->get_axis_value());
-		print_line(joy_motion, sign);
 		switch (joy_motion->get_axis()) {
 			case JoyAxis::LEFT_X: {
 				origin = sign > 0 ? InputGlyphsConstants::INPUT_ORIGIN_LEFTSTICK_DPADEAST : InputGlyphsConstants::INPUT_ORIGIN_LEFTSTICK_DPADWEST;
@@ -313,6 +337,9 @@ String InputGlyphsSingleton::input_type_to_localized_string(InputGlyphsConstants
 		case InputGlyphsConstants::STEAM_DECK_CONTROLLER:
 			ret = RTR("Steam Deck Controller");
 			break;
+		case InputGlyphsConstants::KEYBOARD:
+			ret = RTR("Keyboard");
+			break;
 		case InputGlyphsConstants::INPUT_TYPE_MAX:
 			break; // Can't happen, but silences warning
 	}
@@ -334,6 +361,14 @@ List<StringName> InputGlyphsSingleton::get_game_actions() const {
 		actions = InputMap::get_singleton()->get_actions();
 	}
 	return actions;
+}
+
+String InputGlyphsSingleton::get_event_display_string(const Ref<InputEvent> p_event) const {
+	Ref<InputEventKey> key_event = p_event;
+	if (key_event.is_valid()) {
+		return key_event->as_text_physical_keycode();
+	}
+	return p_event->as_text();
 }
 
 InputGlyphsSingleton::InputGlyphsSingleton() {
