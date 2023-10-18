@@ -87,7 +87,7 @@ public:
 	Ref<InputGlyphsSource> glyph_source;
 
 private:
-	InputGlyphsConstants::InputType current_input_type = InputGlyphsConstants::UNKNOWN;
+	InputGlyphsConstants::InputType current_input_type = InputGlyphsConstants::KEYBOARD;
 	InputGlyphsConstants::InputType forced_input_type = InputGlyphsConstants::UNKNOWN;
 	InputGlyphStyle default_glyph_style = InputGlyphStyle::GLYPH_STYLE_KNOCKOUT;
 	InputGlyphSize default_glyph_size = InputGlyphSize::GLYPH_SIZE_SMALL;

@@ -117,7 +117,6 @@ Ref<InputEvent> InputGlyphsSingleton::get_event_for_action(const StringName &p_a
 }
 
 void InputGlyphsSingleton::_input_event(const Ref<InputEvent> &p_input_event) {
-	print_line("EV!", p_input_event, forced_input_type);
 	Ref<InputEventJoypadButton> joypad_button = p_input_event;
 	if (joypad_button.is_valid() && forced_input_type == InputGlyphsConstants::UNKNOWN) {
 		InputGlyphsConstants::InputType new_input_type = glyph_source->identify_joy(joypad_button->get_device());
@@ -196,6 +195,7 @@ void InputGlyphsSingleton::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "forced_input_type"), "set_forced_input_type", "get_forced_input_type");
 
 	ClassDB::bind_method(D_METHOD("input_type_to_localized_string", "input_type"), &InputGlyphsSingleton::input_type_to_localized_string);
+	ClassDB::bind_method(D_METHOD("init"), &InputGlyphsSingleton::init);
 }
 
 bool InputGlyphsSingleton::has_glyph_texture(const InputGlyphsConstants::InputOrigin p_input_origin, BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
@@ -366,7 +366,11 @@ List<StringName> InputGlyphsSingleton::get_game_actions() const {
 String InputGlyphsSingleton::get_event_display_string(const Ref<InputEvent> p_event) const {
 	Ref<InputEventKey> key_event = p_event;
 	if (key_event.is_valid()) {
-		return key_event->as_text_physical_keycode();
+		if (key_event->get_keycode() != Key::NONE) {
+			return key_event->as_text_keycode();
+		} else {
+			return key_event->as_text_physical_keycode();
+		}
 	}
 	return p_event->as_text();
 }

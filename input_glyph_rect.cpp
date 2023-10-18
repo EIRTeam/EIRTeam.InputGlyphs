@@ -18,6 +18,7 @@ void InputGlyphRect::_shape_action_name_text() {
 	}
 
 	action_name_text_buff->add_string(action_text, font, font_size);
+	update_minimum_size();
 }
 
 void InputGlyphRect::_shape_fallback_glyph_text() {
@@ -34,6 +35,7 @@ void InputGlyphRect::_shape_fallback_glyph_text() {
 	}
 
 	fallback_text_buff->add_string(fallback_glyph_string, font, font_size);
+	update_minimum_size();
 }
 
 BitField<InputGlyphStyle> InputGlyphRect::_get_glyph_style_with_override() const {
@@ -56,17 +58,29 @@ void InputGlyphRect::_bind_methods() {
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, InputGlyphRect, separation);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT_SIZE, InputGlyphRect, fallback_glyph_font_size);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT_SIZE, InputGlyphRect, action_text_font_size);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, InputGlyphRect, action_text_font_color);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, InputGlyphRect, fallback_glyph_font_color);
 
-	ClassDB::bind_method("set_action_text", &InputGlyphRect::set_action_text, "action_text");
+	ClassDB::bind_method(D_METHOD("set_action_text", "action_text"), &InputGlyphRect::set_action_text);
 	ClassDB::bind_method("get_action_text", &InputGlyphRect::get_action_text);
 
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "action_text"), "set_action_text", "get_action_text");
+
+	ClassDB::bind_method("set_action_name", &InputGlyphRect::set_action_name, "action_name");
+	ClassDB::bind_method("get_action_name", &InputGlyphRect::get_action_name);
+
+	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "action_name"), "set_action_name", "get_action_name");
 }
 
 void InputGlyphRect::_notification(int p_what) {
 	switch (p_what) {
+		case NOTIFICATION_ENTER_TREE: {
+			_shape_action_name_text();
+			_shape_fallback_glyph_text();
+		} break;
 		case NOTIFICATION_READY: {
 			InputGlyphsSingleton::get_singleton()->connect("input_glyphs_changed", callable_mp(this, &InputGlyphRect::_on_input_glyphs_changed));
+			_queue_glyph_update();
 		} break;
 		case NOTIFICATION_DRAW: {
 			RID ci = get_canvas_item();
@@ -75,7 +89,7 @@ void InputGlyphRect::_notification(int p_what) {
 			Vector2 pos;
 			if (!action_text.is_empty()) {
 				pos.x += action_name_text_buff->get_size().x;
-				action_name_text_buff->draw(ci, Point2(0, center.y - action_name_text_buff->get_size().y * 0.5f));
+				action_name_text_buff->draw(ci, Point2(0, center.y - action_name_text_buff->get_size().y * 0.5f), theme_cache.action_text_font_color);
 				pos.x += theme_cache.separation;
 			}
 
@@ -102,7 +116,7 @@ void InputGlyphRect::_notification(int p_what) {
 					remaining.y -= margins[SIDE_BOTTOM];
 					stylebox_center = stylebox_pos + offset + remaining * 0.5f;
 				}
-				fallback_text_buff->draw(ci, stylebox_center - fallback_text_buff->get_size() * 0.5f);
+				fallback_text_buff->draw(ci, stylebox_center - fallback_text_buff->get_size() * 0.5f, theme_cache.fallback_glyph_font_color);
 			} else if (glyph_texture.is_valid()) {
 				glyph_texture->draw_rect(ci, Rect2(Point2(pos.x, center.y - theme_cache.icon_size * 0.5f), Size2(theme_cache.icon_size, theme_cache.icon_size)));
 			}
@@ -128,6 +142,7 @@ void InputGlyphRect::_notification(int p_what) {
 					queue_redraw();
 					set_process_internal(false);
 					glyph_update_queued = false;
+					update_minimum_size();
 				}
 			}
 		}
@@ -137,6 +152,9 @@ void InputGlyphRect::_notification(int p_what) {
 void InputGlyphRect::_queue_glyph_update() {
 	glyph_update_queued = true;
 	Ref<InputEvent> ev = InputGlyphsSingleton::get_singleton()->get_event_for_action(action_name);
+	if (!ev.is_valid()) {
+		return;
+	}
 	if (ev->is_class("InputEventKey")) {
 		fallback_glyph_string = InputGlyphsSingleton::get_singleton()->get_event_display_string(ev);
 		glyph_update_queued = false;
@@ -147,6 +165,15 @@ void InputGlyphRect::_queue_glyph_update() {
 		joy_origin = InputGlyphsSingleton::get_singleton()->get_origin_from_joy_event(ev);
 		set_process_internal(true);
 	}
+}
+
+void InputGlyphRect::set_action_name(StringName p_action_name) {
+	action_name = p_action_name;
+	_queue_glyph_update();
+}
+
+StringName InputGlyphRect::get_action_name() const {
+	return action_name;
 }
 
 Size2 InputGlyphRect::get_minimum_size() const {
@@ -173,6 +200,7 @@ Size2 InputGlyphRect::get_minimum_size() const {
 
 	} else {
 		ms.y = MAX(ms.y, theme_cache.icon_size);
+		ms.x += theme_cache.icon_size;
 	}
 
 	return ms;

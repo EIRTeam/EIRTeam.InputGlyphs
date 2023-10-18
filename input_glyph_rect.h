@@ -14,8 +14,10 @@ class InputGlyphRect : public Control {
 		Ref<Font> action_text_font;
 		int action_text_font_size = 0;
 		Ref<StyleBox> fallback_glyph_stylebox;
-		int separation = 0;
+		int separation = 5;
 		int icon_size = 32;
+		Color action_text_font_color;
+		Color fallback_glyph_font_color;
 	} theme_cache;
 
 	StringName action_name = "move_left";
@@ -36,6 +38,8 @@ protected:
 	static void _bind_methods();
 	void _notification(int p_what);
 	void _queue_glyph_update();
+	void set_action_name(StringName p_action_name);
+	StringName get_action_name() const;
 
 public:
 	virtual Size2 get_minimum_size() const override;
