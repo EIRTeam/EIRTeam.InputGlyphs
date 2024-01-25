@@ -64,8 +64,9 @@ void InputGlyphsSingleton::init() {
 	}
 }
 
-Ref<InputEvent> InputGlyphsSingleton::get_event_for_action(const StringName &p_action, int p_skip) {
-	bool is_keyboard = current_input_type == InputGlyphsConstants::KEYBOARD;
+Ref<InputEvent> InputGlyphsSingleton::get_event_for_action(const InputGlyphsConstants::InputType p_input_type, const StringName &p_action, int p_skip) {
+	bool is_keyboard = p_input_type == InputGlyphsConstants::KEYBOARD;
+	int skip_count = 0;
 	if (Engine::get_singleton()->is_editor_hint()) {
 		StringName input_path = "input/" + p_action;
 		if (!ProjectSettings::get_singleton()->has_setting(input_path)) {
@@ -83,13 +84,20 @@ Ref<InputEvent> InputGlyphsSingleton::get_event_for_action(const StringName &p_a
 			if (is_keyboard) {
 				Ref<InputEventKey> key_ev = events[i];
 				if (key_ev.is_valid()) {
-					return key_ev;
+					if (skip_count >= p_skip) {
+						return key_ev;
+					}
+					skip_count++;
 				}
+				continue;
 			}
 
 			InputGlyphsConstants::InputOrigin origin = get_origin_from_joy_event(event);
 			if (origin > InputGlyphsConstants::InputOrigin::INPUT_ORIGIN_INVALID) {
-				return event;
+				if (skip_count >= p_skip) {
+					return event;
+				}
+				skip_count++;
 			}
 		}
 	} else {
@@ -103,13 +111,19 @@ Ref<InputEvent> InputGlyphsSingleton::get_event_for_action(const StringName &p_a
 			if (is_keyboard) {
 				Ref<InputEventKey> key_ev = input_ev;
 				if (key_ev.is_valid()) {
-					return key_ev;
+					if (skip_count >= p_skip) {
+						return key_ev;
+					}
+					skip_count++;
 				}
 				continue;
 			}
 
 			if (origin > InputGlyphsConstants::InputOrigin::INPUT_ORIGIN_INVALID) {
-				return input_ev;
+				if (skip_count >= p_skip) {
+					return input_ev;
+				}
+				skip_count++;
 			}
 		}
 	}
@@ -148,7 +162,7 @@ void InputGlyphsSingleton::_load_glyph_thread(void *p_userdata) {
 	task->task_mutex.lock();
 	if (!task->aborted) {
 		Ref<InputGlyphsSource> glyph_src = InputGlyphsSingleton::get_singleton()->glyph_source;
-		Ref<Texture2D> texture = glyph_src->get_input_glyph(task->input_type, task->glyph_info.origin, task->glyph_info.style, task->glyph_info.size);
+		Ref<Texture2D> texture = glyph_src->get_input_glyph(task->glyph_info.type, task->glyph_info.origin, task->glyph_info.style, task->glyph_info.size);
 		task->texture = texture;
 	}
 	task->task_mutex.unlock();
@@ -185,9 +199,9 @@ void InputGlyphsSingleton::_bind_methods() {
 	BIND_BITFIELD_FLAG(GLYPH_STYLE_NEUTRAL_COLOR_ABXY);
 	BIND_BITFIELD_FLAG(GLYPH_STYLE_SOLID_ABXY);
 
-	ClassDB::bind_method(D_METHOD("has_glyph_texture", "input_origin", "style", "size"), &InputGlyphsSingleton::has_glyph_texture, DEFVAL(InputGlyphSize::GLYPH_SIZE_MAX));
-	ClassDB::bind_method(D_METHOD("get_glyph_texture", "input_origin", "style", "size"), &InputGlyphsSingleton::get_glyph_texture, DEFVAL(InputGlyphSize::GLYPH_SIZE_MAX));
-	ClassDB::bind_method(D_METHOD("request_glyph_texture_load", "input_origin", "style", "size"), &InputGlyphsSingleton::request_glyph_texture_load, DEFVAL(InputGlyphSize::GLYPH_SIZE_MAX));
+	ClassDB::bind_method(D_METHOD("has_glyph_texture", "input_type", "input_origin", "style", "size"), &InputGlyphsSingleton::has_glyph_texture, DEFVAL(InputGlyphSize::GLYPH_SIZE_MAX));
+	ClassDB::bind_method(D_METHOD("get_glyph_texture", "input_type", "input_origin", "style", "size"), &InputGlyphsSingleton::get_glyph_texture, DEFVAL(InputGlyphSize::GLYPH_SIZE_MAX));
+	ClassDB::bind_method(D_METHOD("request_glyph_texture_load", "input_type", "input_origin", "style", "size"), &InputGlyphsSingleton::request_glyph_texture_load, DEFVAL(InputGlyphSize::GLYPH_SIZE_MAX));
 	ClassDB::bind_method(D_METHOD("get_origin_from_joy_event", "input_event"), &InputGlyphsSingleton::get_origin_from_joy_event);
 
 	ClassDB::bind_method(D_METHOD("set_forced_input_type", "forced_input_type"), &InputGlyphsSingleton::set_forced_input_type);
@@ -196,11 +210,13 @@ void InputGlyphsSingleton::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("input_type_to_localized_string", "input_type"), &InputGlyphsSingleton::input_type_to_localized_string);
 	ClassDB::bind_method(D_METHOD("init"), &InputGlyphsSingleton::init);
+	ClassDB::bind_method(D_METHOD("get_event_display_string", "event"), &InputGlyphsSingleton::get_event_display_string);
 }
 
-bool InputGlyphsSingleton::has_glyph_texture(const InputGlyphsConstants::InputOrigin p_input_origin, BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
+bool InputGlyphsSingleton::has_glyph_texture(const InputGlyphsConstants::InputType p_input_type, const InputGlyphsConstants::InputOrigin p_input_origin, BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
 	InputGlyphSize size = p_size == InputGlyphSize::GLYPH_SIZE_MAX ? default_glyph_size : p_size;
 	GlyphInfo info;
+	info.type = p_input_type;
 	info.origin = p_input_origin;
 	info.style = p_style;
 	info.size = size;
@@ -208,9 +224,10 @@ bool InputGlyphsSingleton::has_glyph_texture(const InputGlyphsConstants::InputOr
 	return loaded_glyphs.has(info.get_uid());
 }
 
-Ref<Texture2D> InputGlyphsSingleton::get_glyph_texture(const InputGlyphsConstants::InputOrigin p_input_origin, const BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
+Ref<Texture2D> InputGlyphsSingleton::get_glyph_texture(const InputGlyphsConstants::InputType p_input_type, const InputGlyphsConstants::InputOrigin p_input_origin, const BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
 	InputGlyphSize size = p_size == InputGlyphSize::GLYPH_SIZE_MAX ? default_glyph_size : p_size;
 	GlyphInfo info;
+	info.type = p_input_type;
 	info.origin = p_input_origin;
 	info.style = p_style;
 	info.size = size;
@@ -222,9 +239,10 @@ Ref<Texture2D> InputGlyphsSingleton::get_glyph_texture(const InputGlyphsConstant
 	return loaded_glyphs[uid];
 }
 
-void InputGlyphsSingleton::request_glyph_texture_load(const InputGlyphsConstants::InputOrigin p_input_origin, const BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
+void InputGlyphsSingleton::request_glyph_texture_load(const InputGlyphsConstants::InputType p_input_type, const InputGlyphsConstants::InputOrigin p_input_origin, const BitField<InputGlyphStyle> p_style, const InputGlyphSize p_size) {
 	InputGlyphSize size = p_size == InputGlyphSize::GLYPH_SIZE_MAX ? default_glyph_size : p_size;
 	GlyphInfo info;
+	info.type = p_input_type;
 	info.origin = p_input_origin;
 	info.style = p_style;
 	info.size = size;
@@ -239,8 +257,8 @@ void InputGlyphsSingleton::request_glyph_texture_load(const InputGlyphsConstants
 	load_task->glyph_info.origin = p_input_origin;
 	load_task->glyph_info.size = size;
 	load_task->glyph_info.style = p_style;
+	load_task->glyph_info.type = p_input_type;
 
-	load_task->input_type = _get_input_type();
 	load_task->task_id = WorkerThreadPool::get_singleton()->add_native_task(&_load_glyph_thread, load_task, false, "Load glyph");
 	current_tasks.insert(load_task->glyph_info.get_uid(), load_task);
 }
@@ -297,6 +315,13 @@ void InputGlyphsSingleton::set_forced_input_type(InputGlyphsConstants::InputType
 }
 
 InputGlyphsConstants::InputType InputGlyphsSingleton::get_forced_input_type() const {
+	return forced_input_type;
+}
+
+InputGlyphsConstants::InputType InputGlyphsSingleton::get_visible_input_type() const {
+	if (forced_input_type == InputGlyphsConstants::InputType::UNKNOWN) {
+		return current_input_type;
+	}
 	return forced_input_type;
 }
 
@@ -366,10 +391,31 @@ List<StringName> InputGlyphsSingleton::get_game_actions() const {
 String InputGlyphsSingleton::get_event_display_string(const Ref<InputEvent> p_event) const {
 	Ref<InputEventKey> key_event = p_event;
 	if (key_event.is_valid()) {
+		String text;
+		Key key = Key::NONE;
 		if (key_event->get_keycode() != Key::NONE) {
-			return key_event->as_text_keycode();
+			text = key_event->as_text_keycode();
 		} else {
-			return key_event->as_text_physical_keycode();
+			text = key_event->as_text_physical_keycode();
+		}
+		if (key != Key::NONE) {
+			switch (key) {
+				case Key::UP: {
+					text = "↑";
+				} break;
+				case Key::DOWN: {
+					text = "↓";
+				} break;
+				case Key::LEFT: {
+					text = "←";
+				} break;
+				case Key::RIGHT: {
+					text = "→";
+				} break;
+				default: {
+				} break;
+			}
+			return text;
 		}
 	}
 	return p_event->as_text();

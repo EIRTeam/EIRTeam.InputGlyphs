@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="InputGlyphRect" inherits="Control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="action_name" type="StringName" setter="set_action_name" getter="get_action_name" default="&amp;&quot;move_left&quot;">
+			Name of the action to display
+		</member>
+		<member name="action_skip_count" type="int" setter="set_action_skip_count" getter="get_action_skip_count" default="0">
+			Allows skipping a certain number of actions in the list, used to show alternative events.
+		</member>
+		<member name="action_text" type="String" setter="set_action_text" getter="get_action_text" default="&quot;Action Text&quot;">
+			Text to show next to the action image
+		</member>
+		<member name="disable_axis_direction_display" type="bool" setter="set_disable_axis_direction_display" getter="get_disable_axis_direction_display" default="false">
+			If enabled, will convert any display of an analog axis into displaying the whole analog stick.
+		</member>
+		<member name="forced_input_type" type="int" setter="set_forced_input_type" getter="get_forced_input_type" enum="InputGlyphsConstants.InputType" default="0">
+			Forces an input type to be used.
+		</member>
+		<member name="forced_joy_origin" type="int" setter="set_forced_joy_origin" getter="get_forced_joy_origin" enum="InputGlyphsConstants.InputOrigin" default="-1">
+			Forces a joy origin to be used.
+		</member>
+	</members>
+	<theme_items>
+		<theme_item name="action_text_font_color" data_type="color" type="Color" default="Color(0, 0, 0, 1)">
+		</theme_item>
+		<theme_item name="fallback_glyph_font_color" data_type="color" type="Color" default="Color(0, 0, 0, 1)">
+		</theme_item>
+		<theme_item name="icon_size" data_type="constant" type="int" default="0">
+		</theme_item>
+		<theme_item name="separation" data_type="constant" type="int" default="0">
+		</theme_item>
+		<theme_item name="action_text_font" data_type="font" type="Font">
+		</theme_item>
+		<theme_item name="fallback_glyph_font" data_type="font" type="Font">
+		</theme_item>
+		<theme_item name="action_text_font_size" data_type="font_size" type="int">
+		</theme_item>
+		<theme_item name="fallback_glyph_font_size" data_type="font_size" type="int">
+		</theme_item>
+		<theme_item name="fallback_glyph_stylebox" data_type="style" type="StyleBox">
+		</theme_item>
+	</theme_items>
+</class>

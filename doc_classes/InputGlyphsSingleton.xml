@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="InputGlyphsSingleton" inherits="Object" version="4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+<class name="InputGlyphsSingleton" inherits="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
 	<brief_description>
 	</brief_description>
 	<description>
@@ -7,17 +7,25 @@
 	<tutorials>
 	</tutorials>
 	<methods>
+		<method name="get_event_display_string" qualifiers="const">
+			<return type="String" />
+			<param index="0" name="event" type="InputEvent" />
+			<description>
+				Gets the display string for an event, currently only supports [InputEventKey]
+			</description>
+		</method>
 		<method name="get_glyph_texture">
 			<return type="Texture2D" />
-			<param index="0" name="input_origin" type="int" enum="InputOrigin" />
-			<param index="1" name="style" type="int" enum="InputGlyphStyle" is_bitfield="true" />
-			<param index="2" name="size" type="int" enum="InputGlyphSize" default="3" />
+			<param index="0" name="input_type" type="int" enum="InputGlyphsConstants.InputType" />
+			<param index="1" name="input_origin" type="int" enum="InputGlyphsConstants.InputOrigin" />
+			<param index="2" name="style" type="int" enum="InputGlyphStyle" is_bitfield="true" />
+			<param index="3" name="size" type="int" enum="InputGlyphSize" default="3" />
 			<description>
 				Retrieves the glyph texture, make sure it is already loaded by using [method has_glyph_texture].
 			</description>
 		</method>
 		<method name="get_origin_from_joy_event" qualifiers="const">
-			<return type="int" enum="InputOrigin" />
+			<return type="int" enum="InputGlyphsConstants.InputOrigin" />
 			<param index="0" name="input_event" type="InputEvent" />
 			<description>
 				Returns the input origin from the given joy event, it will return [constant INPUT_ORIGIN_INVALID] if it couldn't find any.
@@ -25,32 +33,39 @@
 		</method>
 		<method name="has_glyph_texture">
 			<return type="bool" />
-			<param index="0" name="input_origin" type="int" enum="InputOrigin" />
-			<param index="1" name="style" type="int" enum="InputGlyphStyle" is_bitfield="true" />
-			<param index="2" name="size" type="int" enum="InputGlyphSize" default="3" />
+			<param index="0" name="input_type" type="int" enum="InputGlyphsConstants.InputType" />
+			<param index="1" name="input_origin" type="int" enum="InputGlyphsConstants.InputOrigin" />
+			<param index="2" name="style" type="int" enum="InputGlyphStyle" is_bitfield="true" />
+			<param index="3" name="size" type="int" enum="InputGlyphSize" default="3" />
 			<description>
 				Returns [code]true[/code] if the glyph texture is ready and can be retrieved using [method get_glyph_texture].
 			</description>
 		</method>
+		<method name="init">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
 		<method name="input_type_to_localized_string" qualifiers="const">
 			<return type="String" />
-			<param index="0" name="input_type" type="int" enum="InputType" />
+			<param index="0" name="input_type" type="int" enum="InputGlyphsConstants.InputType" />
 			<description>
 				Returns a localized string for the given input type.
 			</description>
 		</method>
 		<method name="request_glyph_texture_load">
 			<return type="void" />
-			<param index="0" name="input_origin" type="int" enum="InputOrigin" />
-			<param index="1" name="style" type="int" enum="InputGlyphStyle" is_bitfield="true" />
-			<param index="2" name="size" type="int" enum="InputGlyphSize" default="3" />
+			<param index="0" name="input_type" type="int" enum="InputGlyphsConstants.InputType" />
+			<param index="1" name="input_origin" type="int" enum="InputGlyphsConstants.InputOrigin" />
+			<param index="2" name="style" type="int" enum="InputGlyphStyle" is_bitfield="true" />
+			<param index="3" name="size" type="int" enum="InputGlyphSize" default="3" />
 			<description>
 				Request a glyph to start loading, does nothing if it's already loading.
 			</description>
 		</method>
 	</methods>
 	<members>
-		<member name="forced_input_type" type="int" setter="set_forced_input_type" getter="get_forced_input_type" enum="InputType">
+		<member name="forced_input_type" type="int" setter="set_forced_input_type" getter="get_forced_input_type" enum="InputGlyphsConstants.InputType">
 			Sets the input type that will override the current input type.
 		</member>
 	</members>
@@ -62,109 +77,6 @@
 		</signal>
 	</signals>
 	<constants>
-		<constant name="INPUT_ORIGIN_INVALID" value="-1" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_A" value="0" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_B" value="1" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_X" value="2" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_Y" value="3" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_VIEW" value="4" enum="InputOrigin">
-			Select/Back
-		</constant>
-		<constant name="INPUT_ORIGIN_MENU" value="5" enum="InputOrigin">
-			Start
-		</constant>
-		<constant name="INPUT_ORIGIN_LEFTBUMPER" value="6" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_RIGHTBUMPER" value="7" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_LEFTTRIGGER_PULL" value="8" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_LEFTTRIGGER_CLICK" value="9" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_RIGHTTRIGGER_PULL" value="10" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_RIGHTTRIGGER_CLICK" value="11" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_LEFTSTICK_MOVE" value="12" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_LEFTSTICK_CLICK" value="13" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_LEFTSTICK_DPADNORTH" value="14" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_LEFTSTICK_DPADSOUTH" value="15" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_LEFTSTICK_DPADWEST" value="16" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_LEFTSTICK_DPADEAST" value="17" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_RIGHTSTICK_MOVE" value="18" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_RIGHTSTICK_CLICK" value="19" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_RIGHTSTICK_DPADNORTH" value="20" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_RIGHTSTICK_DPADSOUTH" value="21" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_RIGHTSTICK_DPADWEST" value="22" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_RIGHTSTICK_DPADEAST" value="23" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_DPAD_NORTH" value="24" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_DPAD_SOUTH" value="25" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_DPAD_WEST" value="26" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_DPAD_EAST" value="27" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_DPAD_MOVE" value="28" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_MISC1" value="29" enum="InputOrigin">
-			Xbox Series X share button, PS5 microphone button, Nintendo Switch Pro capture button, Amazon Luna microphone button
-		</constant>
-		<constant name="INPUT_ORIGIN_PADDLE1" value="30" enum="InputOrigin">
-			Xbox Elite paddle P1 (upper left, facing the back)
-		</constant>
-		<constant name="INPUT_ORIGIN_PADDLE2" value="31" enum="InputOrigin">
-			Xbox Elite paddle P3 (upper right, facing the back)
-		</constant>
-		<constant name="INPUT_ORIGIN_PADDLE3" value="32" enum="InputOrigin">
-			Xbox Elite paddle P2 (lower left, facing the back)
-		</constant>
-		<constant name="INPUT_ORIGIN_PADDLE4" value="33" enum="InputOrigin">
-			Xbox Elite paddle P4 (lower right, facing the back)
-		</constant>
-		<constant name="INPUT_ORIGIN_TRACKPAD_CLICK" value="34" enum="InputOrigin">
-		</constant>
-		<constant name="INPUT_ORIGIN_COUNT" value="35" enum="InputOrigin">
-		</constant>
-		<constant name="UNKNOWN" value="0" enum="InputType">
-		</constant>
-		<constant name="STEAM_CONTROLLER" value="1" enum="InputType">
-		</constant>
-		<constant name="XBOX_360_CONTROLLER" value="2" enum="InputType">
-		</constant>
-		<constant name="XBOX_ONE_CONTROLLER" value="3" enum="InputType">
-		</constant>
-		<constant name="GENERIC_XINPUT_CONTROLLER" value="4" enum="InputType">
-		</constant>
-		<constant name="PS3_CONTROLLER" value="5" enum="InputType">
-		</constant>
-		<constant name="PS4_CONTROLLER" value="6" enum="InputType">
-		</constant>
-		<constant name="PS5_CONTROLLER" value="7" enum="InputType">
-		</constant>
-		<constant name="SWITCH_PRO_CONTROLLER" value="8" enum="InputType">
-		</constant>
-		<constant name="STEAM_DECK_CONTROLLER" value="9" enum="InputType">
-		</constant>
-		<constant name="INPUT_TYPE_MAX" value="10" enum="InputType">
-		</constant>
 		<constant name="GLYPH_SIZE_SMALL" value="0" enum="InputGlyphSize">
 			Small glyph size, usually 32x32.
 		</constant>

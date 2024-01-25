@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="InputGlyphsConstants" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<constants>
+		<constant name="INPUT_ORIGIN_INVALID" value="-1" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_A" value="0" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_B" value="1" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_X" value="2" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_Y" value="3" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_VIEW" value="4" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_MENU" value="5" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTBUMPER" value="6" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTBUMPER" value="7" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTTRIGGER_PULL" value="8" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTTRIGGER_CLICK" value="9" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTTRIGGER_PULL" value="10" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTTRIGGER_CLICK" value="11" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTSTICK_MOVE" value="12" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTSTICK_CLICK" value="13" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTSTICK_DPADNORTH" value="14" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTSTICK_DPADSOUTH" value="15" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTSTICK_DPADWEST" value="16" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_LEFTSTICK_DPADEAST" value="17" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTSTICK_MOVE" value="18" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTSTICK_CLICK" value="19" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTSTICK_DPADNORTH" value="20" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTSTICK_DPADSOUTH" value="21" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTSTICK_DPADWEST" value="22" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_RIGHTSTICK_DPADEAST" value="23" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_DPAD_NORTH" value="24" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_DPAD_SOUTH" value="25" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_DPAD_WEST" value="26" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_DPAD_EAST" value="27" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_DPAD_MOVE" value="28" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_MISC1" value="29" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_PADDLE1" value="30" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_PADDLE2" value="31" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_PADDLE3" value="32" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_PADDLE4" value="33" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_TRACKPAD_CLICK" value="34" enum="InputOrigin">
+		</constant>
+		<constant name="INPUT_ORIGIN_COUNT" value="35" enum="InputOrigin">
+		</constant>
+		<constant name="UNKNOWN" value="0" enum="InputType">
+		</constant>
+		<constant name="STEAM_CONTROLLER" value="1" enum="InputType">
+		</constant>
+		<constant name="XBOX_360_CONTROLLER" value="2" enum="InputType">
+		</constant>
+		<constant name="XBOX_ONE_CONTROLLER" value="3" enum="InputType">
+		</constant>
+		<constant name="GENERIC_XINPUT_CONTROLLER" value="4" enum="InputType">
+		</constant>
+		<constant name="PS3_CONTROLLER" value="5" enum="InputType">
+		</constant>
+		<constant name="PS4_CONTROLLER" value="6" enum="InputType">
+		</constant>
+		<constant name="PS5_CONTROLLER" value="7" enum="InputType">
+		</constant>
+		<constant name="SWITCH_PRO_CONTROLLER" value="8" enum="InputType">
+		</constant>
+		<constant name="STEAM_DECK_CONTROLLER" value="9" enum="InputType">
+		</constant>
+		<constant name="INPUT_TYPE_MAX" value="11" enum="InputType">
+		</constant>
+	</constants>
+</class>

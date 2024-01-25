@@ -48,7 +48,32 @@ BitField<InputGlyphStyle> InputGlyphRect::_get_glyph_style_with_override() const
 }
 
 void InputGlyphRect::_on_input_glyphs_changed() {
-	_queue_glyph_update();
+	input_type = InputGlyphsSingleton::get_singleton()->get_visible_input_type();
+	if (forced_input_type == InputGlyphsConstants::UNKNOWN) {
+		_queue_glyph_update();
+	}
+}
+
+InputGlyphsConstants::InputType InputGlyphRect::_get_input_type() const {
+	InputGlyphsConstants::InputType type = input_type;
+	if (forced_input_type != InputGlyphsConstants::UNKNOWN) {
+		type = forced_input_type;
+	}
+
+	if (forced_joy_origin != InputGlyphsConstants::INPUT_ORIGIN_INVALID) {
+		if (type == InputGlyphsConstants::KEYBOARD) {
+			return InputGlyphsConstants::UNKNOWN;
+		}
+	}
+
+	return type;
+}
+
+InputGlyphsConstants::InputOrigin InputGlyphRect::_get_joy_origin() const {
+	if (forced_joy_origin != InputGlyphsConstants::INPUT_ORIGIN_INVALID) {
+		return forced_joy_origin;
+	}
+	return joy_origin;
 }
 
 void InputGlyphRect::_bind_methods() {
@@ -56,6 +81,7 @@ void InputGlyphRect::_bind_methods() {
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT, InputGlyphRect, fallback_glyph_font);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, InputGlyphRect, fallback_glyph_stylebox);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, InputGlyphRect, separation);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, InputGlyphRect, icon_size);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT_SIZE, InputGlyphRect, fallback_glyph_font_size);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT_SIZE, InputGlyphRect, action_text_font_size);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, InputGlyphRect, action_text_font_color);
@@ -70,6 +96,22 @@ void InputGlyphRect::_bind_methods() {
 	ClassDB::bind_method("get_action_name", &InputGlyphRect::get_action_name);
 
 	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "action_name"), "set_action_name", "get_action_name");
+
+	ClassDB::bind_method(D_METHOD("set_forced_input_type", "input_type"), &InputGlyphRect::set_forced_input_type);
+	ClassDB::bind_method("get_forced_input_type", &InputGlyphRect::get_forced_input_type);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "forced_input_type", PROPERTY_HINT_ENUM, "UNKNOWN,STEAM_CONTROLLER,XBOX_360_CONTROLLER,XBOX_ONE_CONTROLLER,GENERIC_XINPUT_CONTROLLER,PS3_CONTROLLER,PS4_CONTROLLER,PS5_CONTROLLER,SWITCH_PRO_CONTROLLER,STEAM_DECK_CONTROLLER,KEYBOARD"), "set_forced_input_type", "get_forced_input_type");
+
+	ClassDB::bind_method(D_METHOD("set_forced_joy_origin", "joy_origin"), &InputGlyphRect::set_forced_joy_origin);
+	ClassDB::bind_method("get_forced_joy_origin", &InputGlyphRect::get_forced_joy_origin);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "forced_joy_origin"), "set_forced_joy_origin", "get_forced_joy_origin");
+
+	ClassDB::bind_method(D_METHOD("set_action_skip_count", "skip_count"), &InputGlyphRect::set_action_skip_count);
+	ClassDB::bind_method("get_action_skip_count", &InputGlyphRect::get_action_skip_count);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "action_skip_count"), "set_action_skip_count", "get_action_skip_count");
+
+	ClassDB::bind_method(D_METHOD("set_disable_axis_direction_display", "disable_axis_direction_display"), &InputGlyphRect::set_disable_axis_direction_display);
+	ClassDB::bind_method("get_disable_axis_direction_display", &InputGlyphRect::get_disable_axis_direction_display);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "disable_axis_direction_display"), "set_disable_axis_direction_display", "get_disable_axis_direction_display");
 }
 
 void InputGlyphRect::_notification(int p_what) {
@@ -79,6 +121,7 @@ void InputGlyphRect::_notification(int p_what) {
 			_shape_fallback_glyph_text();
 		} break;
 		case NOTIFICATION_READY: {
+			input_type = InputGlyphsSingleton::get_singleton()->get_visible_input_type();
 			InputGlyphsSingleton::get_singleton()->connect("input_glyphs_changed", callable_mp(this, &InputGlyphRect::_on_input_glyphs_changed));
 			_queue_glyph_update();
 		} break;
@@ -133,10 +176,10 @@ void InputGlyphRect::_notification(int p_what) {
 		case NOTIFICATION_INTERNAL_PROCESS: {
 			if (glyph_update_queued) {
 				int glyph_style = _get_glyph_style_with_override();
-				if (!InputGlyphsSingleton::get_singleton()->has_glyph_texture(joy_origin, glyph_style)) {
-					InputGlyphsSingleton::get_singleton()->request_glyph_texture_load(joy_origin, glyph_style);
+				if (!InputGlyphsSingleton::get_singleton()->has_glyph_texture(_get_input_type(), _get_joy_origin(), glyph_style, GLYPH_SIZE_MEDIUM)) {
+					InputGlyphsSingleton::get_singleton()->request_glyph_texture_load(_get_input_type(), _get_joy_origin(), glyph_style, GLYPH_SIZE_MEDIUM);
 				} else {
-					glyph_texture = InputGlyphsSingleton::get_singleton()->get_glyph_texture(joy_origin, glyph_style);
+					glyph_texture = InputGlyphsSingleton::get_singleton()->get_glyph_texture(_get_input_type(), _get_joy_origin(), glyph_style, GLYPH_SIZE_MEDIUM);
 					fallback_glyph_string.clear();
 
 					queue_redraw();
@@ -151,18 +194,35 @@ void InputGlyphRect::_notification(int p_what) {
 
 void InputGlyphRect::_queue_glyph_update() {
 	glyph_update_queued = true;
-	Ref<InputEvent> ev = InputGlyphsSingleton::get_singleton()->get_event_for_action(action_name);
+
+	if (forced_joy_origin != InputGlyphsConstants::InputOrigin::INPUT_ORIGIN_INVALID) {
+		set_process_internal(true);
+		return;
+	}
+
+	Ref<InputEvent> ev = InputGlyphsSingleton::get_singleton()->get_event_for_action(_get_input_type(), action_name, action_skip_count);
+
 	if (!ev.is_valid()) {
 		return;
 	}
 	if (ev->is_class("InputEventKey")) {
 		fallback_glyph_string = InputGlyphsSingleton::get_singleton()->get_event_display_string(ev);
 		glyph_update_queued = false;
-		glyph_texture = Ref<Texture2D>();
+		glyph_texture.unref();
 		queue_redraw();
 		_shape_fallback_glyph_text();
 	} else {
 		joy_origin = InputGlyphsSingleton::get_singleton()->get_origin_from_joy_event(ev);
+		if (disable_axis_direction_display) {
+			bool is_left_stick = joy_origin >= InputGlyphsConstants::INPUT_ORIGIN_LEFTSTICK_DPADNORTH && joy_origin <= InputGlyphsConstants::INPUT_ORIGIN_LEFTSTICK_DPADEAST;
+			bool is_right_stick = joy_origin >= InputGlyphsConstants::INPUT_ORIGIN_RIGHTSTICK_DPADNORTH && joy_origin <= InputGlyphsConstants::INPUT_ORIGIN_RIGHTSTICK_DPADEAST;
+
+			if (is_left_stick) {
+				joy_origin = InputGlyphsConstants::INPUT_ORIGIN_LEFTSTICK_MOVE;
+			} else if (is_right_stick) {
+				joy_origin = InputGlyphsConstants::INPUT_ORIGIN_RIGHTSTICK_MOVE;
+			}
+		}
 		set_process_internal(true);
 	}
 }
@@ -198,6 +258,8 @@ Size2 InputGlyphRect::get_minimum_size() const {
 			ms.x += fallback_string_size.x;
 		}
 
+		ms.y = MAX(theme_cache.icon_size, ms.y);
+
 	} else {
 		ms.y = MAX(ms.y, theme_cache.icon_size);
 		ms.x += theme_cache.icon_size;
@@ -219,5 +281,38 @@ void InputGlyphRect::set_action_text(const String &p_action_text) {
 		_shape_action_name_text();
 		update_minimum_size();
 		queue_redraw();
+	}
+}
+
+InputGlyphsConstants::InputType InputGlyphRect::get_forced_input_type() const {
+	return forced_input_type;
+}
+
+void InputGlyphRect::set_forced_input_type(const InputGlyphsConstants::InputType p_forced_input_type) {
+	if (p_forced_input_type != forced_input_type) {
+		forced_input_type = p_forced_input_type;
+		_queue_glyph_update();
+	}
+}
+
+InputGlyphsConstants::InputOrigin InputGlyphRect::get_forced_joy_origin() const {
+	return forced_joy_origin;
+}
+
+void InputGlyphRect::set_forced_joy_origin(const InputGlyphsConstants::InputOrigin p_forced_joy_origin) {
+	if (forced_joy_origin != p_forced_joy_origin) {
+		forced_joy_origin = p_forced_joy_origin;
+		_queue_glyph_update();
+	}
+}
+
+int InputGlyphRect::get_action_skip_count() const {
+	return action_skip_count;
+}
+
+void InputGlyphRect::set_action_skip_count(int p_action_skip_count) {
+	if (action_skip_count != p_action_skip_count) {
+		action_skip_count = p_action_skip_count;
+		_queue_glyph_update();
 	}
 }

@@ -3,7 +3,6 @@
 #include "core/config/project_settings.h"
 #include "core/object/class_db.h"
 #include "input_glyph_rect.h"
-#include "input_glyph_texture_rect.h"
 #include "input_glyphs_constants.h"
 #include "input_glyphs_singleton.h"
 
@@ -31,7 +30,6 @@ void initialize_input_glyphs_module(ModuleInitializationLevel p_level) {
 	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "eirteam/input_glyphs/abxy_overrides", PROPERTY_HINT_FLAGS, "Neutral Color ABXY:16, Solid ABXY:32"), 0);
 	GDREGISTER_ABSTRACT_CLASS(InputGlyphsSingleton);
 	GDREGISTER_ABSTRACT_CLASS(InputGlyphsConstants);
-	GDREGISTER_CLASS(InputGlyphTextureRect);
 	GDREGISTER_CLASS(InputGlyphRect);
 	glyphs_singleton = memnew(InputGlyphsSingleton);
 	Engine::get_singleton()->add_singleton(Engine::Singleton("InputGlyphsSingleton", glyphs_singleton->get_singleton()));
