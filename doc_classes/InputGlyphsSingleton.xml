@@ -28,7 +28,7 @@
 			<return type="int" enum="InputGlyphsConstants.InputOrigin" />
 			<param index="0" name="input_event" type="InputEvent" />
 			<description>
-				Returns the input origin from the given joy event, it will return [constant INPUT_ORIGIN_INVALID] if it couldn't find any.
+				Returns the input origin from the given joy event, it will return [constant InputGlyphsConstants.INPUT_ORIGIN_INVALID] if it couldn't find any.
 			</description>
 		</method>
 		<method name="has_glyph_texture">
