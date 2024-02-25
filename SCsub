@@ -47,5 +47,4 @@ if ARGUMENTS.get("input_glyphs_shared", "no") == "yes":
     env.Append(LIBS=["libinput_glyphs-linuxbsd-editor-dev-x86_64"])
 else:
     env_input_glyphs.add_source_files(module_obj, sources)
-    env.Depends("glyphs.gen.h", module_obj)
     env.modules_sources += module_obj
