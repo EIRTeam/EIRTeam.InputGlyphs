@@ -2,7 +2,7 @@ import json
 from io import StringIO
 from typing import List, Dict
 import os
-
+from platform_methods import subprocess_main
 
 class ThemeInfo:
     graphics: List[int]
@@ -103,3 +103,6 @@ def make_glyphs_header(target, source, env):
         f.write(input_type_graphics_abxy_override_string.getvalue())
 
         f.write("#endif\n")
+
+if __name__ == "__main__":
+    subprocess_main(globals())

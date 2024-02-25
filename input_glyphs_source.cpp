@@ -30,7 +30,7 @@
 
 #include "input_glyphs_source.h"
 #include "controller_list.h"
-#include "glyphs.gen.h"
+#include "modules/input_glyphs/glyphs.gen.h"
 #include "input_glyph_svg_decode.h"
 #include "scene/resources/image_texture.h"
 #include "scene/resources/placeholder_textures.h"
