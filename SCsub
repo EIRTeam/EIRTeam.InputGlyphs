@@ -30,12 +30,15 @@ if "svg" in env.module_list:
 sources = [x for x in Glob("*.cpp") if str(x) not in excluded]
 
 env_input_glyphs["BUILDERS"]["MakeInputGlyphsHeader"] = Builder(
-    action=env.Run(input_glyphs_builder.make_glyphs_header, "Generating input glyphs header."),
+    action=env.Run(input_glyphs_builder.make_glyphs_header),
     suffix=".h",
     src_suffix=".svg",
 )
 
-env_input_glyphs.Alias("glyph_headers", [env_input_glyphs.MakeInputGlyphsHeader("#modules/input_glyphs/glyphs.gen.h", "resources/info.json")])
+env_input_glyphs.Alias(
+    "glyph_headers",
+    [env_input_glyphs.MakeInputGlyphsHeader("#modules/input_glyphs/glyphs.gen.h", "resources/info.json")],
+)
 
 if ARGUMENTS.get("input_glyphs_shared", "no") == "yes":
     # Shared lib compilation
