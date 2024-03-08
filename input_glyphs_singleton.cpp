@@ -395,8 +395,15 @@ String InputGlyphsSingleton::get_event_display_string(const Ref<InputEvent> p_ev
 		Key key = Key::NONE;
 		if (key_event->get_keycode() != Key::NONE) {
 			text = key_event->as_text_keycode();
+			key = key_event->get_keycode();
+		} else if (key_event->get_key_label() != Key::NONE) {
+			key = key_event->get_key_label();
+			text = key_event->as_text_key_label();
+		} else if (key_event->get_physical_keycode() != Key::NONE) {
+			key = key_event->get_physical_keycode();
+			text = keycode_get_string(key_event->get_physical_keycode());
 		} else {
-			text = key_event->as_text_physical_keycode();
+			text = "(Unset)";
 		}
 		if (key != Key::NONE) {
 			switch (key) {
