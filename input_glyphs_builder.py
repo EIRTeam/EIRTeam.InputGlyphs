@@ -2,6 +2,7 @@ import json
 from io import StringIO
 from typing import List, Dict
 import os
+from pathlib import Path
 
 class ThemeInfo:
     graphics: List[int]
@@ -60,7 +61,7 @@ def make_glyphs_header(target, source, env):
         f.write("static const char* __glyph_icons [] = {\n")
         for file_name in svg_files:
             f.write('\t"')
-            with open("modules/input_glyphs/resources/" + file_name, "rb") as svgf:
+            with open(Path(source[0].srcnode().abspath).parent / file_name, "rb") as svgf:
                 b = svgf.read(1)
                 while len(b) == 1:
                     f.write("\\" + str(hex(ord(b)))[1:])

@@ -37,7 +37,7 @@ env_input_glyphs["BUILDERS"]["MakeInputGlyphsHeader"] = Builder(
 
 env_input_glyphs.Alias(
     "glyph_headers",
-    [env_input_glyphs.MakeInputGlyphsHeader("#modules/input_glyphs/glyphs.gen.h", "resources/info.json")],
+    [env_input_glyphs.MakeInputGlyphsHeader("glyphs.gen.h", "resources/info.json")],
 )
 
 if ARGUMENTS.get("input_glyphs_shared", "no") == "yes":
