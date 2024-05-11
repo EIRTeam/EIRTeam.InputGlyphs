@@ -84,6 +84,8 @@ void InputGlyphRect::_bind_methods() {
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, InputGlyphRect, icon_size);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT_SIZE, InputGlyphRect, fallback_glyph_font_size);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT_SIZE, InputGlyphRect, action_text_font_size);
+	BIND_THEME_ITEM_CUSTOM(Theme::DATA_TYPE_CONSTANT, InputGlyphRect, action_text_font_outline_size, "action_text_font_outline_size");
+	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, InputGlyphRect, action_text_font_outline_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, InputGlyphRect, action_text_font_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, InputGlyphRect, fallback_glyph_font_color);
 
@@ -132,6 +134,9 @@ void InputGlyphRect::_notification(int p_what) {
 			Vector2 pos;
 			if (!action_text.is_empty()) {
 				pos.x += action_name_text_buff->get_size().x;
+				if (theme_cache.action_text_font_outline_size > 0) {
+					action_name_text_buff->draw_outline(ci, Point2(0, center.y - action_name_text_buff->get_size().y * 0.5f), theme_cache.action_text_font_outline_size, theme_cache.action_text_font_outline_color);
+				}
 				action_name_text_buff->draw(ci, Point2(0, center.y - action_name_text_buff->get_size().y * 0.5f), theme_cache.action_text_font_color);
 				pos.x += theme_cache.separation;
 			}

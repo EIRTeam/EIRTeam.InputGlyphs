@@ -17,6 +17,8 @@ class InputGlyphRect : public Control {
 		int separation = 5;
 		int icon_size = 32;
 		Color action_text_font_color;
+		int action_text_font_outline_size = 0;
+		Color action_text_font_outline_color;
 		Color fallback_glyph_font_color;
 	} theme_cache;
 
