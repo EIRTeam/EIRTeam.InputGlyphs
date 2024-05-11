@@ -374,11 +374,11 @@ String InputGlyphsSingleton::input_type_to_localized_string(InputGlyphsConstants
 List<StringName> InputGlyphsSingleton::get_game_actions() const {
 	List<StringName> actions;
 	if (Engine::get_singleton()->is_editor_hint()) {
-		List<PropertyInfo> pinfo;
-		ProjectSettings::get_singleton()->get_property_list(&pinfo);
-		for (int i = 0; i < pinfo.size(); i++) {
-			if (pinfo[i].name.begins_with("input/")) {
-				StringName name = pinfo[i].name.substr(pinfo[i].name.find("/") + 1, pinfo[i].name.length());
+		List<PropertyInfo> pinfo_l;
+		ProjectSettings::get_singleton()->get_property_list(&pinfo_l);
+		for (const PropertyInfo &pinfo : pinfo_l) {
+			if (pinfo.name.begins_with("input/")) {
+				StringName name = pinfo.name.substr(pinfo.name.find("/") + 1, pinfo.name.length());
 				actions.push_back(name);
 			}
 		}
@@ -408,16 +408,16 @@ String InputGlyphsSingleton::get_event_display_string(const Ref<InputEvent> p_ev
 		if (key != Key::NONE) {
 			switch (key) {
 				case Key::UP: {
-					text = "↑";
+					text = String::utf8("↑");
 				} break;
 				case Key::DOWN: {
-					text = "↓";
+					text = String::utf8("↓");
 				} break;
 				case Key::LEFT: {
-					text = "←";
+					text = String::utf8("←");
 				} break;
 				case Key::RIGHT: {
-					text = "→";
+					text = String::utf8("→");
 				} break;
 				default: {
 				} break;
