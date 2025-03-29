@@ -1,8 +1,8 @@
 import json
 from io import StringIO
-from typing import List, Dict
-import os
 from pathlib import Path
+from typing import Dict, List
+
 
 class ThemeInfo:
     graphics: List[int]
@@ -43,7 +43,7 @@ def make_glyphs_header(target, source, env):
                     if not graphic_path:
                         theme_nfo.graphics.append(-1)
                         continue
-                    if not graphic_path in svg_files_map:
+                    if graphic_path not in svg_files_map:
                         svg_files.append(graphic_path)
                         svg_files_map[graphic_path] = len(svg_files) - 1
                     theme_nfo.graphics.append(svg_files_map[graphic_path])
@@ -51,7 +51,7 @@ def make_glyphs_header(target, source, env):
                     if not graphic_abxy_override_path:
                         theme_nfo.graphics_abxy_overrides.append(-1)
                         continue
-                    if not graphic_abxy_override_path in svg_files_map:
+                    if graphic_abxy_override_path not in svg_files_map:
                         svg_files.append(graphic_abxy_override_path)
                         svg_files_map[graphic_abxy_override_path] = len(svg_files) - 1
                     theme_nfo.graphics_abxy_overrides.append(svg_files_map[graphic_abxy_override_path])

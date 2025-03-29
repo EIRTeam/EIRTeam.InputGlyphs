@@ -1,3 +1,5 @@
+#ifndef INPUT_GLYPH_RECT_H
+#define INPUT_GLYPH_RECT_H
 #include "input_glyphs.h"
 #include "scene/gui/control.h"
 #include "scene/resources/text_line.h"
@@ -76,3 +78,4 @@ public:
 		}
 	}
 };
+#endif // INPUT_GLYPH_RECT_H
