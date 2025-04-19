@@ -249,7 +249,6 @@ void InputGlyphsSingleton::request_glyph_texture_load(const InputGlyphsConstants
 
 	MutexLock lock(mutex);
 	if (current_tasks.has(info.get_uid()) || loaded_glyphs.has(info.get_uid())) {
-		mutex.unlock();
 		return;
 	}
 
